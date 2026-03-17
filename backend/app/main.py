@@ -36,3 +36,8 @@ app.include_router(progress_routes.router)
 def read_root():
     logger.info("Root endpoint accessed")
     return {"message": "Welcome to SkillMap AI API - Phase 3 (Assignments & Progress Active)"}
+
+@app.get("/health")
+def health_check():
+    logger.info("Health endpoint accessed")
+    return {"status": "ok"}
