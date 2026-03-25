@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from app.api import (
     auth_routes, 
     profile_routes, 
@@ -14,11 +15,21 @@ from app.core.logger import logger
 from app.models.user import User
 from app.models.profile import Profile
 from app.models.assignment import Assignment
+from app.models.roadmap import Roadmap, RoadmapWeek
 
 # Create database tables
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="SkillMap AI API")
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # For demo purposes, allow all origins
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.on_event("startup")
 async def startup_event():

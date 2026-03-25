@@ -2,6 +2,7 @@
 
 import { motion, Variants } from "framer-motion";
 import { Apple, Play } from "lucide-react";
+import Link from "next/link";
 
 export default function Hero() {
     const containerVariants: Variants = {
@@ -71,15 +72,17 @@ export default function Hero() {
                     </motion.p>
 
                     <motion.div variants={itemVariants} className="flex flex-wrap gap-5">
-                        <motion.button
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            className="bg-black text-white px-10 py-5 rounded-[24px] font-black flex items-center space-x-3 shadow-xl hover:bg-gray-800 transition-all border border-black"
-                        >
-                            <div className="text-left leading-none">
-                                <p className="text-lg">Get Started Free</p>
-                            </div>
-                        </motion.button>
+                        <Link href="/auth/login">
+                            <motion.button
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                className="bg-black text-white px-10 py-5 rounded-[24px] font-black flex items-center space-x-3 shadow-xl hover:bg-gray-800 transition-all border border-black w-full sm:w-auto"
+                            >
+                                <div className="text-left leading-none">
+                                    <p className="text-lg">Get Started Free</p>
+                                </div>
+                            </motion.button>
+                        </Link>
                         <motion.button
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
