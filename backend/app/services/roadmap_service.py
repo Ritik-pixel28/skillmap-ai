@@ -6,13 +6,20 @@ def generate_dummy_roadmap(db: Session, user_id: int):
     """Generates and saves a dummy structured roadmap."""
     logger.info(f"Generating and saving dummy roadmap for user_id: {user_id}")
     
+    # 1. Fetch user's profile for customization
+    from app.models.profile import Profile
+    profile = db.query(Profile).filter(Profile.user_id == user_id).first()
+    title = f"{profile.career_goal} Mastery Path" if profile else "AI-Powered Career Journey"
+
     # 1. Create Roadmap Header
     db_roadmap = db.query(Roadmap).filter(Roadmap.user_id == user_id).first()
     if not db_roadmap:
-        db_roadmap = Roadmap(user_id=user_id, title="AI-Powered Career Journey")
+        db_roadmap = Roadmap(user_id=user_id, title=title)
         db.add(db_roadmap)
         db.commit()
         db.refresh(db_roadmap)
+    else:
+        db_roadmap.title = title
     
     # 2. Add Weeks
     dummy_data = {

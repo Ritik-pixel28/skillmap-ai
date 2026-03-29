@@ -11,16 +11,20 @@ def create_or_update_profile(db: Session, user_id: int, data: ProfileCreate):
         
         if db_profile:
             logger.info(f"Updating profile for user_id: {user_id}")
+            db_profile.education = data.education
             db_profile.career_goal = data.career_goal
             db_profile.skill_level = data.skill_level
             db_profile.weekly_hours = data.weekly_hours
+            db_profile.timeline = data.timeline
         else:
             logger.info(f"Creating new profile for user_id: {user_id}")
             db_profile = Profile(
                 user_id=user_id,
+                education=data.education,
                 career_goal=data.career_goal,
                 skill_level=data.skill_level,
-                weekly_hours=data.weekly_hours
+                weekly_hours=data.weekly_hours,
+                timeline=data.timeline
             )
             db.add(db_profile)
         

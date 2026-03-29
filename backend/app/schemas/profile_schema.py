@@ -2,9 +2,11 @@ from pydantic import BaseModel, Field
 from typing import Optional, Any
 
 class ProfileBase(BaseModel):
+    education: str = Field(..., description="The user's education level")
     career_goal: str = Field(..., description="The user's career goal")
     skill_level: str = Field(..., description="Initial skill level (e.g., Beginner, Intermediate)")
-    weekly_hours: int = Field(..., gt=0, description="Hours dedicated per week")
+    weekly_hours: int = Field(..., gt=0, le=40, description="Hours dedicated per week")
+    timeline: int = Field(..., gt=0, description="Timeline in weeks")
 
 class ProfileCreate(ProfileBase):
     pass

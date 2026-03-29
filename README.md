@@ -276,6 +276,18 @@ npm run dev
 
 ---
 
+### 🚀 Permanent Fix: Running Both Services
+If you see **"Failed to fetch"** on the login page, it means the backend is not running. 
+
+To start **both** services at once easily:
+1. Ensure you are in the project root directory.
+2. Run the start-all script:
+   ```bash
+   chmod +x start-all.sh
+   ./start-all.sh
+   ```
+This will start the FastAPI backend in the background and the Next.js frontend in the foreground.
+
 ### 4.Environment Variables
 
 #### Backend (.env)
