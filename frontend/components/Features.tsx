@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 
 const features = [
     {
-        image: "/images/feature_1_3d_brain_1773912715228.png",
+        image: "/images/feature_1_roadmap.png",
         title: "AI Roadmaps",
         description: "Personalized learning paths generated specifically for your career goals.",
         color: "from-blue-100 to-blue-50"

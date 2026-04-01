@@ -104,23 +104,22 @@ export default function Hero() {
                     transition={{ duration: 1.2, type: "spring", bounce: 0.3 }}
                     className="relative group"
                 >
-                    <div className="relative w-full max-w-[650px] aspect-[4/5] rounded-[80px] overflow-hidden bg-gradient-to-br from-blue-600 via-indigo-700 to-purple-800 shadow-[0_80px_120px_-30px_rgba(37,99,235,0.4)]">
+                    <div className="relative w-full max-w-[650px] aspect-[4/5] rounded-[80px] overflow-hidden bg-gradient-to-br from-gray-900 via-black to-gray-900 shadow-[0_80px_120px_-30px_rgba(0,0,0,0.6)] border border-white/5">
                         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(255,255,255,0.2),transparent)]" />
 
                         <motion.img
                             animate={{
-                                y: [0, -30, 0],
-                                rotate: [0, 1.5, 0],
-                                scale: [1, 1.05, 1]
+                                y: [0, -20, 0],
+                                rotate: [0, 1, 0],
                             }}
                             transition={{
-                                duration: 10,
+                                duration: 8,
                                 repeat: Infinity,
                                 ease: "easeInOut"
                             }}
-                            src="/images/hero_3d_career_objects_1773912663468.png"
-                            alt="SkillMap AI Roadmap"
-                            className="w-full h-full object-contain scale-110 p-12 drop-shadow-[0_35px_35px_rgba(0,0,0,0.5)]"
+                            src="/images/hero_collage.png"
+                            alt="SkillMap AI Artistic Collage"
+                            className="w-full h-full object-cover p-0 brightness-110 contrast-110 drop-shadow-2xl"
                         />
                     </div>
 

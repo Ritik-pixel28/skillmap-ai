@@ -87,7 +87,7 @@ SkillMap AI solves this by combining:
 ### Backend
 - FastAPI
 - SQLAlchemy ORM
-- Pydantic validation
+- Pydantic  validation
 - JWT Authentication
 
 ### Database
