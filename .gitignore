@@ -6,3 +6,10 @@ __pycache__/
 node_modules/
 .next/
 
+
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
