@@ -3,9 +3,7 @@ from app.models.user import User
 from app.schemas.auth_schema import RegisterSchema, LoginSchema
 from app.core.security import hash_password, verify_password
 from fastapi import HTTPException, status
-import logging
-
-logger = logging.getLogger(__name__)
+from app.core.logger import logger
 
 def register_user(db: Session, data: RegisterSchema):
     # Check if user already exists
@@ -34,22 +32,25 @@ def register_user(db: Session, data: RegisterSchema):
     return new_user
 
 def login_user(db: Session, data: LoginSchema):
+    email = data.email.strip()
+    password = data.password.strip()
+    
     # Fetch user
-    user = db.query(User).filter(User.email == data.email).first()
+    user = db.query(User).filter(User.email == email).first()
     if not user:
-        logger.warning(f"Login failed: User {data.email} not found.")
+        logger.warning(f"Login failed: User {email} not found.")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid credentials"
         )
     
     # Verify password
-    if not verify_password(data.password, user.password):
-        logger.warning(f"Login failed: Incorrect password for {data.email}.")
+    if not verify_password(password, user.password):
+        logger.warning(f"Login failed: Incorrect password for {email}.")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid credentials"
         )
     
-    logger.info(f"User logged in successfully: {data.email}")
+    logger.info(f"User logged in successfully: {email}")
     return user
