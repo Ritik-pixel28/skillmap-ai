@@ -18,7 +18,4 @@ class UserResponse(BaseModel):
     class Config:
         from_attributes = True
 
-class APIResponse(BaseModel):
-    success: bool
-    data: Optional[Any] = None
-    message: str
+# APIResponse removed here, imported from profile_schema.py in routes
