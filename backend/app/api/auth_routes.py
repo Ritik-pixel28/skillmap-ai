@@ -27,13 +27,16 @@ def register(data: RegisterSchema, db: Session = Depends(get_db)):
 
 @router.post("/login", response_model=APIResponse)
 def login(data: LoginSchema, db: Session = Depends(get_db)):
-    """Authenticate user and return user ID."""
+    """Authenticate user and return user ID and access token."""
     try:
         logger.info(f"Processing login for: {data.email}")
-        user = auth_service.login_user(db, data)
+        result = auth_service.login_user(db, data)
         return APIResponse(
             success=True,
-            data={"user_id": user.id},
+            data={
+                "user_id": result["user"].id,
+                "access_token": result["access_token"]
+            },
             message="Login successful"
         )
     except HTTPException as e:
