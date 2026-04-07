@@ -39,5 +39,25 @@ def generate_dummy_roadmap(db: Session, user_id: int):
     db.commit()
     db.refresh(db_roadmap)
     
-    # Return structured dict
-    return {f"week{w.week_number}": w.content for w in db_roadmap.weeks}
+    # Return richer structured data (Updated for SaaS Dashboard Timeline)
+    roadmap_weeks = []
+    
+    # Define tasks with titles and durations as requested
+    base_tasks = [
+        {"title": "Theory & Concepts", "duration": "2 days"},
+        {"title": "Hands-on Exercises", "duration": "2 days"},
+        {"title": "Mini Project Build", "duration": "2 days"},
+        {"title": "Weekly Review", "duration": "1 day"}
+    ]
+
+    for w in db_roadmap.weeks:
+        roadmap_weeks.append({
+            "week": w.week_number,
+            "title": w.content,
+            "tasks": base_tasks
+        })
+    
+    return {
+        "duration": f"{len(db_roadmap.weeks)} weeks",
+        "weeks": roadmap_weeks
+    }

@@ -7,7 +7,8 @@ export const login = async (email: string, password: string) => {
   });
   if (result.success) {
     if (typeof window !== 'undefined') {
-      localStorage.setItem('user_id', result.data.user_id);
+      localStorage.setItem('user_id', result.data.user_id.toString());
+      localStorage.setItem('token', result.data.access_token);
     }
   }
   return result;

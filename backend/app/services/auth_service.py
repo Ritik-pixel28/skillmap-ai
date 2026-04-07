@@ -45,6 +45,7 @@ def login_user(db: Session, data: LoginSchema):
         )
     
     # Verify password
+    from app.core.security import verify_password, create_access_token # In-function import to avoid circular dependency
     if not verify_password(password, user.password):
         logger.warning(f"Login failed: Incorrect password for {email}.")
         raise HTTPException(
@@ -52,5 +53,8 @@ def login_user(db: Session, data: LoginSchema):
             detail="Invalid credentials"
         )
     
+    # Create JWT Token
+    access_token = create_access_token(data={"sub": str(user.id), "email": user.email})
+    
     logger.info(f"User logged in successfully: {email}")
-    return user
+    return {"user": user, "access_token": access_token}
