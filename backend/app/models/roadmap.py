@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, JSON
 from sqlalchemy.orm import relationship
 from app.database import Base
 import datetime
@@ -23,7 +23,8 @@ class RoadmapWeek(Base):
     id = Column(Integer, primary_key=True, index=True)
     roadmap_id = Column(Integer, ForeignKey("roadmaps.id"), nullable=False)
     week_number = Column(Integer, nullable=False)
-    content = Column(String, nullable=False)
+    title = Column(String, nullable=False)
+    tasks = Column(JSON, nullable=False)
 
     # Relationships
     roadmap = relationship("Roadmap", back_populates="weeks")

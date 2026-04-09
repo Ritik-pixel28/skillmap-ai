@@ -12,7 +12,6 @@ class Profile(Base):
     career_goal = Column(String, nullable=False)
     skill_level = Column(String, nullable=False)
     weekly_hours = Column(Integer, nullable=False)
-    timeline = Column(Integer, nullable=False) # In weeks
+    timeline = Column(Integer, nullable=False)
 
-    # Relationship back to User (optional but good practice)
     user = relationship("User", backref="profile", uselist=False)
