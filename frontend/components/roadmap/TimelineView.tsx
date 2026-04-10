@@ -1,174 +1,266 @@
-"use client";
-
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Search, Bell, Plus, Clock, ChevronRight, AlertCircle, RefreshCw } from "lucide-react";
-
-const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun", "Mon", "Tue", "Wed", "Thu", "Fri"];
+import { 
+  Search, 
+  Bell, 
+  Plus, 
+  Clock, 
+  ChevronRight, 
+  ChevronLeft,
+  Calendar as CalendarIcon,
+  PlayCircle,
+  CheckCircle2
+} from "lucide-react";
+import { TimelineCard } from "./TimelineCard";
 
 export const TimelineView = ({ 
   roadmapData, 
   loading, 
   error, 
-  onRetry 
+  onRetry,
+  selectedWeek,
+  onToggleTask,
+  selectedTask,
+  setSelectedTask
 }: { 
   roadmapData: any, 
   loading: boolean, 
   error: string | null,
-  onRetry: () => void
+  onRetry: () => void,
+  selectedWeek: number | null,
+  onToggleTask: (weekNumber: number, taskId: any) => void,
+  selectedTask: any | null,
+  setSelectedTask: (task: any | null) => void
 }) => {
+  const [isStarted, setIsStarted] = useState(false);
   
-  const scheduleItems = roadmapData?.weeks?.flatMap((week: any, weekIdx: number) => {
-    let currentDayInWeek = 1;
-    return week.tasks.map((task: any, taskIdx: number) => {
-      const durationDays = parseInt(task.duration) || 1;
-      const startDay = (weekIdx * 7) + currentDayInWeek;
-      const item = {
-        id: `${week.week}-${taskIdx}`,
-        title: task.title,
-        day: startDay,
-        colSpan: durationDays,
-        color: taskIdx % 2 === 0 ? "#2563EB" : "#10B981",
-        avatars: Math.floor(Math.random() * 3) + 1,
-        weekInfo: `Week ${week.week}`,
-        durationText: task.duration
-      };
-      currentDayInWeek += durationDays;
-      return item;
-    });
+  useEffect(() => {
+    setIsStarted(false);
+  }, [selectedWeek]);
+  
+  const getDates = () => {
+    const dates = [];
+    const start = new Date();
+    for (let i = 0; i < 56; i++) {
+      const d = new Date(start);
+      d.setDate(start.getDate() + i);
+      dates.push({
+        dayName: d.toLocaleDateString('en-US', { weekday: 'short' }),
+        dayNum: d.getDate(),
+        fullDate: d.toDateString()
+      });
+    }
+    return dates;
+  };
+
+  const dates = getDates();
+ 
+  const allTasks = roadmapData?.weeks?.flatMap((week: any) => {
+    if (!week.tasks) return [];
+    return week.tasks.map((task: any, index: number) => ({
+      ...task,
+      week: week.week,
+      weekTitle: week.title,
+      uniqueId: `${week.week}-${task.id || index}`
+    }));
   }) || [];
 
+  const filteredTasks = selectedWeek !== null
+    ? allTasks.filter((task: any) => String(task.week) === String(selectedWeek))
+    : allTasks;
+
+  const currentWeekData = selectedWeek !== null
+    ? roadmapData?.weeks?.find((w: any) => String(w.week) === String(selectedWeek))
+    : null;
+
   return (
-    <div className="flex-1 h-full flex flex-col bg-slate-50/30 backdrop-blur-md overflow-hidden relative">
-      <div className="h-20 border-b border-slate-100 flex items-center justify-between px-10 shrink-0 bg-white/20 backdrop-blur-xl sticky top-0 z-20">
+    <div className="flex-1 h-full flex flex-col bg-white overflow-hidden relative min-w-0">
+      <div 
+        className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none"
+        style={{
+          backgroundImage: `
+            linear-gradient(to right, #64748b 1px, transparent 1px),
+            linear-gradient(to bottom, #64748b 1px, transparent 1px)
+          `,
+          backgroundSize: '40px 40px'
+        }}
+      />
+
+      <div className="h-24 border-b border-slate-100 flex items-center justify-between px-10 shrink-0 bg-white/80 backdrop-blur-xl sticky top-0 z-20">
         <div className="flex items-center gap-10">
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight">Roadmap</h1>
-          <div className="relative group/search">
+          <div className="flex flex-col">
+            <h1 className="text-2xl font-black text-slate-900 tracking-tight">Timeline</h1>
+            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Project Master Plan</span>
+          </div>
+          <div className="relative group/search hidden md:block">
             <Search className="w-4 h-4 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2 group-focus-within/search:text-blue-500 transition-colors" />
             <input 
               type="text" 
-              placeholder="Search project..." 
-              className="bg-white/40 border border-slate-100 rounded-2xl py-2.5 pl-11 pr-6 text-sm font-bold text-slate-700 outline-none focus:bg-white focus:border-blue-200 focus:shadow-lg shadow-slate-100/50 transition-all w-64"
+              placeholder="Filter tasks..." 
+              className="bg-slate-50 border border-slate-100 rounded-2xl py-2.5 pl-11 pr-6 text-sm font-bold text-slate-700 outline-none focus:bg-white focus:border-blue-200 focus:shadow-lg shadow-slate-100/50 transition-all w-64"
             />
           </div>
         </div>
 
-        <div className="flex items-center gap-6">
-          <button className="w-10 h-10 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-all relative">
+        <div className="flex items-center gap-4">
+          <button className="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-all relative">
             <Bell className="w-5 h-5" />
-            <div className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 border-2 border-white rounded-full" />
+            <div className="absolute top-3 right-3 w-2.5 h-2.5 bg-blue-600 border-2 border-white rounded-full" />
           </button>
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className="flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-2xl font-black text-sm shadow-xl shadow-blue-500/20 hover:bg-blue-700 transition-colors"
+            className="flex items-center gap-2 bg-slate-900 text-white px-8 py-3.5 rounded-2xl font-black text-sm shadow-xl shadow-slate-900/20 hover:bg-black transition-colors"
           >
             <Plus className="w-4 h-4" />
-            New Project
+            Add Task
           </motion.button>
         </div>
       </div>
 
-      <div className="px-10 pt-10 pb-4 flex items-center justify-between z-10">
-         <div>
-            <h2 className="text-3xl font-black text-slate-900 tracking-tight mb-2">
-              {loading ? "Generating Roadmap..." : roadmapData?.duration ? `Mastery Path (${roadmapData.duration})` : "Project Timeline"}
-            </h2>
-            <div className="flex items-center gap-4 text-xs font-black text-slate-400 uppercase tracking-widest leading-none">
-              <span>{roadmapData?.duration || "Custom duration"}</span>
-              <div className="w-1 h-1 bg-slate-300 rounded-full" />
-              <span>AI-Generated Schedule</span>
+      <div className="h-20 bg-white/50 backdrop-blur-sm border-b border-slate-100 px-6 flex items-center overflow-x-auto custom-scrollbar shrink-0 z-10">
+        <div className="flex items-center gap-2 min-w-max">
+          {dates.map((d, i) => (
+            <div 
+              key={i} 
+              className={`flex flex-col items-center justify-center w-14 h-14 rounded-2xl transition-all cursor-pointer
+                ${i === 0 ? "bg-blue-600 text-white shadow-lg shadow-blue-500/30" : "hover:bg-slate-100 text-slate-500"}`}
+            >
+              <span className={`text-[9px] font-black uppercase mb-0.5 ${i === 0 ? "text-white/70" : "text-slate-400"}`}>
+                {d.dayName}
+              </span>
+              <span className="text-sm font-black leading-none">{d.dayNum}</span>
             </div>
-         </div>
-         <div className="flex items-center gap-2 pr-4">
-            <button className="w-8 h-8 rounded-full border border-slate-100 bg-white flex items-center justify-center hover:bg-slate-50">
-               <ChevronRight className="w-4 h-4 rotate-180" />
-            </button>
-            <button className="w-8 h-8 rounded-full border border-slate-100 bg-white flex items-center justify-center hover:bg-slate-50">
-               <ChevronRight className="w-4 h-4" />
-            </button>
-         </div>
+          ))}
+        </div>
       </div>
 
-      <div className="flex-1 flex flex-col overflow-x-auto custom-scrollbar p-10 relative z-10 h-full">
-         <div className="flex flex-col min-w-[1240px] h-full relative">
+      <div className="flex-1 overflow-y-auto px-10 py-12 custom-scrollbar z-10 relative">
+        <div className="max-w-7xl mx-auto flex flex-col pt-4">
+          
+          <div className="flex items-center justify-between mb-16 px-4">
+            <div>
+              <div className="flex items-center gap-3 mb-2">
+                <span className="px-3 py-1 bg-slate-900 text-white text-[10px] font-black uppercase tracking-widest rounded-full">
+                  {selectedWeek !== null ? `Week ${selectedWeek}` : "All Weeks"}
+                </span>
+                <span className="text-slate-400 font-bold text-sm">
+                  {selectedWeek !== null ? "Focused View" : "Overview Path"}
+                </span>
+              </div>
+              <h2 className="text-4xl font-black text-slate-900 tracking-tight leading-none capitalize">
+                {selectedWeek !== null ? (currentWeekData?.title || `Week ${selectedWeek} Roadmap`) : "Complete Skill Mastery"}
+              </h2>
+            </div>
             
-            <div className="flex border-b border-slate-200/50 pb-6 mb-12">
-               {days.map((day, i) => (
-                 <div key={i} className="flex-1 flex flex-col items-center gap-2 group/day cursor-pointer">
-                    <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider group-hover/day:text-blue-500 transition-colors">{day}</span>
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center font-black text-xs transition-all 
-                      ${i === 1 ? "bg-slate-900 text-white shadow-xl shadow-slate-300/50 scale-110" : "text-slate-900 group-hover/day:bg-slate-100"}`}>
-                      {24 + i}
+            {selectedWeek && (
+              <button 
+                onClick={() => setIsStarted(!isStarted)}
+              className={`flex items-center gap-2 px-6 py-4 rounded-3xl font-black transition-all
+                ${isStarted 
+                  ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/20" 
+                  : "bg-blue-50 text-blue-600 hover:bg-blue-100"}`}
+            >
+              {isStarted ? (
+                <>
+                  <CheckCircle2 className="w-5 h-5" />
+                  In Progress
+                </>
+              ) : (
+                <>
+                  <PlayCircle className="w-5 h-5" />
+                  Start Week
+                </>
+              )}
+              </button>
+            )}
+          </div>
+
+          <div className="relative">
+            {loading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                {[1, 2, 3, 4, 5, 6].map((n) => (
+                  <div key={n} className="h-48 bg-slate-50 rounded-[32px] animate-pulse" />
+                ))}
+              </div>
+            ) : filteredTasks.length > 0 ? (
+              <div className={`
+                ${selectedWeek 
+                  ? "flex flex-col relative" 
+                  : "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10 px-4" 
+                }`}
+              >
+                {selectedWeek && (
+                  <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-blue-200 via-slate-200 to-transparent -translate-x-1/2 hidden md:block" />
+                )}
+
+                {selectedWeek ? (
+                  filteredTasks.map((task: any, index: number) => (
+                    <TimelineCard 
+                      key={task.uniqueId}
+                      task={task}
+                      index={index}
+                      isLeft={index % 2 === 0}
+                      onToggle={() => onToggleTask(task.week, task.id)}
+                      showWeekBadge={false}
+                      isActive={selectedTask?.uniqueId === task.uniqueId}
+                      onSelect={() => setSelectedTask(task)}
+                    />
+                  ))
+                ) : (
+                  roadmapData?.weeks?.map((week: any) => (
+                    <div key={week.week} className="flex flex-col gap-6 col-span-full mb-12 last:mb-0">
+                      <div className="flex items-center gap-4 px-2">
+                        <div className="w-12 h-12 rounded-2xl bg-slate-900 flex items-center justify-center text-white font-black text-sm">
+                          W{week.week}
+                        </div>
+                        <div className="flex flex-col">
+                          <h3 className="text-xl font-black text-slate-800 leading-tight">
+                            {week.title}
+                          </h3>
+                          <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                             {week.tasks.length} Action Items
+                          </span>
+                        </div>
+                        <div className="flex-1 h-px bg-slate-100 ml-4" />
+                      </div>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10">
+                        {week.tasks.map((task: any, tIdx: number) => {
+                          const uniqueId = `${week.week}-${task.id || tIdx}`;
+                          const normalizedTask = {
+                            ...task,
+                            week: week.week,
+                            weekTitle: week.title,
+                            id: task.id || tIdx,
+                            uniqueId
+                          };
+                          return (
+                            <TimelineCard 
+                              key={uniqueId}
+                              task={normalizedTask}
+                              index={tIdx}
+                              isLeft={false}
+                              onToggle={() => onToggleTask(week.week, normalizedTask.id)}
+                              showWeekBadge={false}
+                              isActive={selectedTask?.uniqueId === uniqueId}
+                              onSelect={() => setSelectedTask(normalizedTask)}
+                            />
+                          );
+                        })}
+                      </div>
                     </div>
-                 </div>
-               ))}
-            </div>
-
-            <div className="absolute top-[80px] bottom-0 left-0 right-0 flex -z-10">
-               {days.map((_, i) => (
-                 <div key={i} className={`flex-1 border-r border-slate-100/50 ${i === 1 ? "bg-blue-50/10" : ""}`} />
-               ))}
-            </div>
-
-            <div className="flex-1 flex flex-col gap-8 py-10 relative">
-               {loading ? (
-                 [1, 2].map((n) => (
-                   <div key={n} className="h-28 w-1/3 bg-white/50 rounded-[24px] border border-slate-100 animate-pulse ml-[10%]" />
-                 ))
-               ) : (
-                 scheduleItems.map((item: any, index: number) => {
-                   const step = 100 / days.length;
-                   const left = (step * (item.day - 1)) % 100;
-                   const width = Math.min(step * item.colSpan, 100 - left);
-
-                   return (
-                     <motion.div
-                       key={item.id}
-                       initial={{ opacity: 0, x: 50 }}
-                       animate={{ opacity: 1, x: 0 }}
-                       transition={{ delay: 0.1 + index * 0.05, type: "spring", stiffness: 100 }}
-                       className="relative cursor-pointer group/card h-28"
-                       style={{ 
-                          left: `${left}%`, 
-                          width: `${width}%`,
-                          minWidth: '200px'
-                       }}
-                     >
-                       <div className="h-full rounded-[24px] bg-white border border-slate-100 shadow-xl shadow-slate-200/40 p-5 flex flex-col justify-between hover:shadow-2xl hover:shadow-slate-300 transition-all hover:scale-[1.02] active:scale-95 group/detail overflow-hidden relative">
-                          <div 
-                            className="absolute left-0 top-0 bottom-0 w-1.5"
-                            style={{ backgroundColor: item.color }}
-                          />
-
-                          <div>
-                             <div className="flex items-center justify-between mb-2">
-                               <h4 className="text-[15px] font-black text-slate-800 tracking-tight leading-none truncate pr-4">
-                                 {item.title}
-                               </h4>
-                               <div className="text-[10px] font-black text-slate-400 group-hover/card:text-blue-500 transition-colors uppercase whitespace-nowrap">
-                                  {item.durationText}
-                               </div>
-                             </div>
-                             <div className="flex items-center gap-2 text-[11px] font-black text-slate-400 uppercase tracking-widest">
-                               <Clock className="w-3 h-3" />
-                               <span>{item.weekInfo}</span>
-                             </div>
-                          </div>
-
-                          <div className="flex items-center justify-between mt-auto">
-                             <div className="flex -space-x-3">
-                                {Array.from({ length: item.avatars }).map((_, a) => (
-                                  <div key={a} className="w-6 h-6 rounded-full bg-slate-200 border-2 border-white" />
-                                ))}
-                             </div>
-                          </div>
-                       </div>
-                     </motion.div>
-                   );
-                 })
-               )}
-            </div>
-         </div>
+                  ))
+                )}
+              </div>
+            ) : (
+              <div className="text-center py-20 bg-slate-50/50 rounded-[40px] border border-dashed border-slate-200">
+                <CalendarIcon className="w-12 h-12 text-slate-200 mx-auto mb-4" />
+                <p className="text-slate-400 font-bold">No tasks found for this selection.</p>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

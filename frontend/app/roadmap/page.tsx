@@ -13,7 +13,14 @@ export default function Roadmap() {
   const [roadmapData, setRoadmapData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedWeek, setSelectedWeek] = useState<number | null>(null);
+  const [selectedTask, setSelectedTask] = useState<any | null>(null);
   const router = useRouter();
+
+  const handleSetSelectedWeek = (week: number | null) => {
+    setSelectedWeek(week);
+    setSelectedTask(null);
+  };
 
   const fetchRoadmap = async () => {
     setLoading(true);
@@ -26,8 +33,24 @@ export default function Roadmap() {
       }
 
       const result = await generateRoadmap();
+
       if (result.success) {
-        setRoadmapData(result.data);
+        const rawData = result.data;
+        const normalizedWeeks = rawData?.weeks?.map((w: any) => ({
+          week: w.week || w.week_number,
+          title: w.title || w.content,
+          tasks: (w.tasks || []).map((t: any, tidx: number) => {
+             if (typeof t === 'string') return { id: tidx, title: t, duration: "N/A", completed: false, subtopics: [] };
+             return { ...t, id: t.id || tidx, completed: !!t.completed, subtopics: t.subtopics || [] };
+          })
+        })) || [];
+
+        const normalizedData = {
+          ...rawData,
+          weeks: normalizedWeeks
+        };
+
+        setRoadmapData(normalizedData);
       } else {
         setError(result.message || "Failed to generate roadmap");
       }
@@ -38,6 +61,25 @@ export default function Roadmap() {
     }
   };
 
+  const toggleTaskCompletion = (weekNumber: number, taskId: any) => {
+    setRoadmapData((prev: any) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        weeks: prev.weeks.map((w: any) => {
+          if (w.week !== weekNumber) return w;
+          return {
+            ...w,
+            tasks: w.tasks.map((t: any) => {
+              if (t.id !== taskId) return t;
+              return { ...t, completed: !t.completed };
+            })
+          };
+        })
+      };
+    });
+  };
+
   useEffect(() => {
     fetchRoadmap();
   }, []);
@@ -46,14 +88,25 @@ export default function Roadmap() {
     <div className="flex h-screen w-full bg-gradient-to-br from-blue-50 to-white overflow-hidden font-sans antialiased text-slate-900 selection:bg-blue-100 selection:text-blue-900">
       <Sidebar />
 
-      <div className="flex flex-1 relative">
-        <ProjectPanel roadmapData={roadmapData} loading={loading} />
+      <div className="flex flex-1 relative min-w-0">
+        <ProjectPanel 
+          roadmapData={roadmapData} 
+          loading={loading} 
+          selectedWeek={selectedWeek}
+          setSelectedWeek={handleSetSelectedWeek}
+          selectedTask={selectedTask}
+          setSelectedTask={setSelectedTask}
+        />
 
         <TimelineView 
           roadmapData={roadmapData} 
           loading={loading} 
           error={error} 
           onRetry={fetchRoadmap}
+          selectedWeek={selectedWeek}
+          onToggleTask={toggleTaskCompletion}
+          selectedTask={selectedTask}
+          setSelectedTask={setSelectedTask}
         />
 
         <div className="fixed top-[-5%] right-[-5%] w-[400px] h-[400px] bg-blue-400/10 blur-[120px] rounded-full pointer-events-none z-0" />
