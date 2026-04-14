@@ -17,6 +17,9 @@ def generate_user_roadmap(db: Session, user_id: int):
         logger.warning(f"Profile not found for user_id: {user_id}")
         raise HTTPException(status_code=404, detail="User profile not found. Please complete your profile first.")
 
+    # Safety check: Cap duration at 8 weeks
+    profile.timeline = min(profile.timeline, 8)
+
     try:
         # 2. Call AI service
         ai_data = ai_service.generate_ai_roadmap(profile)

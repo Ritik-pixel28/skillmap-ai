@@ -15,13 +15,19 @@ def generate_ai_roadmap(profile):
     if not client:
         return get_fallback_roadmap(profile)
 
-    logger.info(f"Generating Groq roadmap: {profile.career_goal}")
+    intensity = "Light"
+    if profile.weekly_hours > 20:
+        intensity = "Intensive"
+    elif profile.weekly_hours >= 10:
+        intensity = "Medium"
+
+    logger.info(f"Generating {intensity} Groq roadmap: {profile.career_goal} for {profile.timeline} weeks")
 
     prompt = f"""
-    Create a detailed, week-by-week learning roadmap for a user with these details:
+    Create a highly actionable, week-by-week learning roadmap for a user:
     - Career Goal: {profile.career_goal}
     - Current Skill Level: {profile.skill_level}
-    - Commitment: {profile.weekly_hours} hours per week
+    - Intensity Level: {intensity} ({profile.weekly_hours} hours/week)
     - Education Background: {profile.education}
     - Desired Timeline: {profile.timeline} weeks
  
@@ -35,8 +41,11 @@ def generate_ai_roadmap(profile):
           "tasks": [
             {{ 
               "title": "Specific task 1", 
+              "description": "Clear explanation of what the user will learn and why it matters.",
               "duration": "e.g. 2 days",
-              "subtopics": ["Subtopic A", "Subtopic B", "Subtopic C"]
+              "estimated_days": 2,
+              "subtopics": ["Subtopic A", "Subtopic B", "Subtopic C"],
+              "actions": ["Watch tutorial", "Practice exercise", "Build prototype"]
             }}
           ]
         }}
@@ -44,10 +53,14 @@ def generate_ai_roadmap(profile):
     }}
  
     Rules:
-    1. Provide between 4 to {min(profile.timeline, 8)} weeks.
-    2. Tasks must be practical, actionable, and include a realistic duration.
-    3. Include 3-5 subtopics for every task to guide the user.
-    4. JSON output ONLY. No conversational filler or markdown backticks.
+    1. Provide exactly {profile.timeline} weeks of structured learning.
+    2. Intensity Check: {intensity} mode requires {"dense, challenging" if intensity == "Intensive" else "manageable, steady"} pacing.
+    3. Each week must have 2-5 practical tasks.
+    4. Each task must include "estimated_days" (between 1 to 4 days).
+    5. Include 3-5 subtopics for every task to guide the user.
+    6. Include an "actions" list for each task with 2-3 specific action items.
+    7. Include a 1-2 sentence "description" for every task.
+    8. JSON output ONLY. No conversational filler or markdown backticks.
     """
  
     try:
@@ -91,18 +104,24 @@ def get_fallback_roadmap(profile):
                 "tasks": [
                     { 
                         "title": f"Research core concepts of {profile.career_goal}", 
+                        "description": "Examine the industry landscape, key tools, and current market requirements.",
                         "duration": "2 days",
-                        "subtopics": ["Industry overview", "Key terminology", "Market trends"]
+                        "subtopics": ["Industry overview", "Key terminology", "Market trends"],
+                        "actions": ["Read industry blogs", "Watch intro videos", "Take notes on terminology"]
                     },
                     { 
                         "title": "Set up the necessary development environment", 
+                        "description": "Configure your workspace with the essential software and extensions.",
                         "duration": "1 day",
-                        "subtopics": ["Install IDE", "Configure version control", "Dependency management"]
+                        "subtopics": ["Install IDE", "Configure version control", "Dependency management"],
+                        "actions": ["Install VS Code", "Set up Git", "Install project dependencies"]
                     },
                     { 
                         "title": "Complete a basic hello-world project", 
+                        "description": "Get hands-on experience by building your first small implementation.",
                         "duration": "2 days",
-                        "subtopics": ["Basic syntax", "Variable declarations", "Compilation/Running"]
+                        "subtopics": ["Basic syntax", "Variable declarations", "Compilation/Running"],
+                        "actions": ["Write first code snippet", "Debug errors", "Run successful build"]
                     }
                 ]
             },
@@ -112,18 +131,24 @@ def get_fallback_roadmap(profile):
                 "tasks": [
                     { 
                         "title": "Study key syntax and libraries", 
+                        "description": "Master the core building blocks and standard libraries of the technology.",
                         "duration": "3 days",
-                        "subtopics": ["Core library functions", "Optimization patterns", "Error handling"]
+                        "subtopics": ["Core library functions", "Optimization patterns", "Error handling"],
+                        "actions": ["Read documentation", "Complete coding challenges", "Watch advanced tutorial"]
                     },
                     { 
                         "title": "Build a small practical component", 
+                        "description": "Apply your knowledge to create a reusable part of an application.",
                         "duration": "2 days",
-                        "subtopics": ["Modular design", "Data flow", "UI integration"]
+                        "subtopics": ["Modular design", "Data flow", "UI integration"],
+                        "actions": ["Design component logic", "Implement functionality", "Style the UI"]
                     },
                     { 
                         "title": "Read top-rated articles on best practices", 
+                        "description": "Learn from industry experts to write clean, professional-grade code.",
                         "duration": "1 day",
-                        "subtopics": ["Design patterns", "Testing strategies", "Documentation"]
+                        "subtopics": ["Design patterns", "Testing strategies", "Documentation"],
+                        "actions": ["Read 3 technical articles", "Review open source code", "Summarize learnings"]
                     }
                 ]
             }
