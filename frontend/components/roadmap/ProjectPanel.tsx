@@ -32,7 +32,7 @@ export const ProjectPanel = ({
   })) || [];
 
   return (
-    <div className="w-96 h-full border-r border-slate-100/50 flex flex-col pt-10 px-6 shrink-0 bg-white/40 backdrop-blur-sm z-10 overflow-hidden">
+    <div className="w-96 h-full border-r border-slate-100/50 flex flex-col pt-10 px-4 md:px-6 shrink-0 bg-white/40 backdrop-blur-sm z-10 overflow-hidden max-w-full">
       <AnimatePresence mode="wait">
         {selectedTask ? (
           <motion.div 
@@ -40,7 +40,7 @@ export const ProjectPanel = ({
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 20 }}
-            className="flex flex-col h-full"
+            className="flex flex-col h-full max-w-full overflow-hidden"
           >
             <div className="flex items-center gap-4 mb-8">
               <button 
@@ -63,6 +63,13 @@ export const ProjectPanel = ({
                   </span>
                 </div>
                 <h3 className="text-2xl font-black mb-4 leading-tight">{selectedTask.title}</h3>
+                
+                {selectedTask.description && (
+                  <p className="text-white/70 text-sm font-bold leading-relaxed mb-6">
+                    {selectedTask.description}
+                  </p>
+                )}
+
                 <div className="flex items-center gap-2 text-white/40 text-xs font-bold">
                   <Clock className="w-4 h-4" />
                   <span>Interactive Learning Map</span>
@@ -75,7 +82,7 @@ export const ProjectPanel = ({
                   <div className="flex-1 h-px bg-slate-100" />
                 </h4>
                 
-                <div className="flex flex-col gap-4 pb-10">
+                <div className="flex flex-col gap-4 mb-10">
                   {(selectedTask.subtopics || ["Fundamentals", "Practical Implementation", "Case Studies"]).map((topic: string, i: number) => (
                     <motion.div
                       key={topic + i}
@@ -95,6 +102,24 @@ export const ProjectPanel = ({
                     </motion.div>
                   ))}
                 </div>
+
+                {selectedTask.actions && selectedTask.actions.length > 0 && (
+                  <>
+                    <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-6 flex items-center gap-3">
+                      Action Checklist
+                      <div className="flex-1 h-px bg-slate-100" />
+                    </h4>
+                    <div className="flex flex-col gap-3 pb-10">
+                      {selectedTask.actions.map((action: string, i: number) => (
+                        <div key={i} className="flex items-start gap-3 p-4 rounded-2xl bg-blue-50/50 border border-blue-100/50">
+                          <div className="w-5 h-5 rounded-md border-2 border-blue-200 mt-0.5" />
+                          <span className="text-sm font-bold text-slate-600">{action}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                )}
+
               </div>
             </div>
           </motion.div>
@@ -104,7 +129,7 @@ export const ProjectPanel = ({
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
-            className="flex flex-col h-full"
+            className="flex flex-col h-full max-w-full overflow-hidden"
           >
       <div className="flex items-center justify-between mb-8 px-2">
         <h2 className="text-xl font-black text-slate-900 tracking-tight">Project Weeks</h2>
@@ -113,7 +138,7 @@ export const ProjectPanel = ({
         </button>
       </div>
 
-      <div className="flex flex-col gap-4 overflow-y-auto pb-10 custom-scrollbar">
+      <div className="flex flex-col gap-4 overflow-y-auto pb-10 custom-scrollbar pr-1">
         {!loading && (
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -121,7 +146,7 @@ export const ProjectPanel = ({
             whileHover={{ x: 5 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => setSelectedWeek(null)}
-            className={`p-5 rounded-[24px] cursor-pointer transition-all border flex items-center justify-between
+            className={`p-5 rounded-[24px] cursor-pointer transition-all border flex items-center justify-between mx-1
               ${selectedWeek === null 
                 ? "bg-slate-900 border-slate-900 text-white shadow-2xl shadow-slate-900/20" 
                 : "bg-white border-slate-100 text-slate-900 hover:border-slate-200 shadow-sm"
@@ -142,7 +167,7 @@ export const ProjectPanel = ({
 
         {loading ? (
           [1, 2, 3].map((n) => (
-            <div key={n} className="p-6 rounded-[28px] bg-white border border-slate-100 animate-pulse">
+            <div key={n} className="p-6 rounded-[28px] bg-white border border-slate-100 animate-pulse mb-4 mx-1">
               <div className="flex justify-between mb-4">
                 <div className="w-20 h-4 bg-slate-100 rounded-full" />
                 <div className="w-12 h-4 bg-slate-100 rounded-full" />
@@ -161,7 +186,7 @@ export const ProjectPanel = ({
               whileHover={{ x: 5 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => setSelectedWeek(week.id)}
-              className={`p-6 rounded-[28px] cursor-pointer transition-all border group
+              className={`p-6 rounded-[28px] cursor-pointer transition-all border group mb-4 mx-1 w-full rounded-2xl
                 ${week.active 
                   ? "bg-slate-900 border-slate-900 text-white shadow-2xl shadow-slate-900/20" 
                   : "bg-white border-slate-100 text-slate-900 hover:border-slate-200 hover:shadow-xl shadow-slate-100/50 shadow-sm"
@@ -207,6 +232,7 @@ export const ProjectPanel = ({
             </motion.div>
           ))
         )}
+
 
           </div>
         </motion.div>

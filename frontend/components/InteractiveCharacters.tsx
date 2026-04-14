@@ -402,7 +402,7 @@ function Character({
         backgroundColor: bodyColor,
         transition: "background-color 0.4s ease",
       }}
-      animate={idleAnim}
+      animate={idleAnim as any}
     >
       {/* ── Eye pair container ── */}
       <div

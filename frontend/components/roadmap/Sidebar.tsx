@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useRouter, usePathname } from "next/navigation";
 import { 
   BarChart2, 
   Calendar, 
@@ -9,19 +10,21 @@ import {
   Settings, 
   User, 
   MessageSquare,
-  Search,
   Plus
 } from "lucide-react";
 
 export const Sidebar = () => {
+  const router = useRouter();
+  const pathname = usePathname();
+
   const menuItems = [
-    { icon: Layout, active: false },
-    { icon: BarChart2, active: false },
-    { icon: Calendar, active: true },
-    { icon: Layers, active: false },
-    { icon: MessageSquare, active: false },
-    { icon: User, active: false },
-    { icon: Settings, active: false },
+    { icon: Layout, label: "Dashboard", path: "/dashboard" },
+    { icon: Calendar, label: "Roadmap", path: "/roadmap" },
+    { icon: BarChart2, label: "Stats", path: "#" },
+    { icon: Layers, label: "Library", path: "#" },
+    { icon: MessageSquare, label: "Community", path: "#" },
+    { icon: User, label: "Profile", path: "#" },
+    { icon: Settings, label: "Settings", path: "#" },
   ];
 
   return (
@@ -33,20 +36,25 @@ export const Sidebar = () => {
       </div>
 
       <div className="flex flex-col gap-6 flex-1">
-        {menuItems.map((item, index) => (
-          <motion.button
-            key={index}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-            className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all 
-              ${item.active 
-                ? "bg-white text-blue-600 shadow-xl shadow-slate-200/50" 
-                : "text-slate-400 hover:bg-white/50 hover:text-slate-600"
-              }`}
-          >
-            <item.icon className="w-6 h-6" />
-          </motion.button>
-        ))}
+        {menuItems.map((item, index) => {
+          const isActive = pathname === item.path;
+          return (
+            <motion.button
+              key={index}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => item.path !== "#" && router.push(item.path)}
+              title={item.label}
+              className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all cursor-pointer
+                ${isActive 
+                  ? "bg-white text-blue-600 shadow-xl shadow-slate-200/50" 
+                  : "text-slate-400 hover:bg-white/50 hover:text-slate-600"
+                }`}
+            >
+              <item.icon className="w-6 h-6" />
+            </motion.button>
+          );
+        })}
       </div>
 
       <div className="flex flex-col gap-4 mb-4">

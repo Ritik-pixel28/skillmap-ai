@@ -1,16 +1,20 @@
 import { motion } from "framer-motion";
 import { Clock, CheckCircle2, Circle } from "lucide-react";
 
+interface Task {
+  id: any;
+  title: string;
+  description?: string;
+  duration?: string;
+  completed: boolean;
+  week?: number;
+  weekTitle?: string;
+  subtopics?: string[];
+  actions?: string[];
+}
+
 interface TimelineCardProps {
-  task: {
-    id: any;
-    title: string;
-    duration?: string;
-    completed: boolean;
-    week?: number;
-    weekTitle?: string;
-    subtopics?: string[];
-  };
+  task: Task;
   index: number;
   isLeft: boolean;
   onToggle: () => void;
@@ -39,12 +43,13 @@ export const TimelineCard = ({ task, index, isLeft, onToggle, showWeekBadge, isA
 
       <div className={`w-1/2 ${isLeft ? "pr-12 text-right" : "pl-12 text-left"}`}>
         <motion.div
-          whileHover={{ y: -8, scale: 1.05 }}
+          layout
+          whileHover={{ y: -8, scale: 1.02 }}
           onClick={onSelect}
           className={`group p-7 rounded-[32px] border-2 transition-all duration-300 cursor-pointer relative overflow-hidden flex flex-col justify-between
-            min-w-[260px] sm:min-w-[280px] lg:min-w-[320px] min-h-[160px]
+            min-w-[260px] sm:min-w-[280px] lg:min-w-[320px]
             ${isActive 
-              ? "bg-white border-blue-500 shadow-2xl shadow-blue-500/10" 
+              ? "bg-white border-blue-500 shadow-2xl shadow-blue-500/10 z-30" 
               : isCompleted 
                 ? "bg-emerald-50/50 border-emerald-100 shadow-emerald-100" 
                 : "bg-white border-slate-100 shadow-xl shadow-slate-200/40 hover:border-slate-300 hover:shadow-2xl"
@@ -81,19 +86,47 @@ export const TimelineCard = ({ task, index, isLeft, onToggle, showWeekBadge, isA
               )}
             </div>
 
-            <h4 className={`text-xl font-black tracking-tight leading-relaxed break-words transition-colors
+            <h4 className={`text-xl font-black tracking-tight leading-loose break-words transition-colors
               ${isCompleted ? "text-emerald-700 line-through opacity-70" : "text-slate-800 group-hover:text-blue-600"}`}>
               {task.title}
             </h4>
+
+            {isActive && task.description && (
+              <p className={`text-sm font-bold leading-relaxed text-slate-600 mt-2 ${isLeft ? "text-right" : "text-left"}`}>
+                {task.description}
+              </p>
+            )}
+
+            {isActive && task.subtopics && task.subtopics.length > 0 && (
+              <div className={`flex flex-wrap gap-2 mt-4 ${isLeft ? "justify-end" : "justify-start"}`}>
+                {task.subtopics.map((sub, i) => (
+                  <span key={i} className="px-3 py-1.5 bg-slate-50 border border-slate-100 rounded-xl text-[10px] font-black text-slate-500 uppercase tracking-tighter">
+                    {sub}
+                  </span>
+                ))}
+              </div>
+            )}
+
+            {isActive && task.actions && task.actions.length > 0 && (
+              <div className={`flex flex-col gap-2 mt-6 p-5 rounded-[24px] bg-blue-50/50 border border-blue-100/30 ${isLeft ? "text-right" : "text-left"}`}>
+                <span className="text-[10px] font-black uppercase text-blue-500 tracking-widest mb-2 opacity-60">Actions</span>
+                {task.actions.map((action, i) => (
+                  <div key={i} className={`flex items-start gap-3 ${isLeft ? "flex-row-reverse" : "flex-row"}`}>
+                    <div className="w-4 h-4 rounded border-2 border-blue-200 mt-0.5 shrink-0" />
+                    <span className="text-sm font-bold text-slate-600">{action}</span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
-          <div className={`flex items-center gap-2 mt-4 ${isLeft ? "justify-end" : "justify-start"}`}>
+          <div className={`flex items-center gap-2 mt-8 ${isLeft ? "justify-end" : "justify-start"}`}>
             <div 
               onClick={(e) => {
                 e.stopPropagation();
                 onToggle();
               }}
-              className={`flex items-center gap-2 text-sm font-bold transition-all z-20 hover:scale-105 active:scale-95
+              className={`flex items-center gap-2 text-sm font-black transition-all z-20 hover:scale-105 active:scale-95
               ${isCompleted ? "text-emerald-600" : "text-slate-400 hover:text-blue-500"}`}
             >
               {isCompleted ? <CheckCircle2 className="w-5 h-5" /> : <Circle className="w-5 h-5" />}
