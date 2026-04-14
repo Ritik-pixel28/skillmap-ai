@@ -61,7 +61,7 @@ export default function ProfileSetup() {
     career_goal: "",
     skill_level: "beginner",
     weekly_hours: 15,
-    timeline: 12
+    timeline: 6
   });
 
   useEffect(() => {
@@ -76,10 +76,24 @@ export default function ProfileSetup() {
 
   const totalHours = formData.weekly_hours * formData.timeline;
   
-  const getFeasibility = () => {
-    if (totalHours >= 800) return { label: "High", color: "text-green-600 bg-green-50", icon: CheckCircle2 };
-    if (totalHours >= 400) return { label: "Medium", color: "text-amber-600 bg-amber-50", icon: TrendingUp };
-    return { label: "Low", color: "text-rose-600 bg-rose-50", icon: Target };
+  const getIntensity = () => {
+    const hours = formData.weekly_hours;
+    const weeks = formData.timeline;
+
+    if (hours >= 35 && weeks <= 4) {
+      return { label: "Extreme 🔥", color: "text-rose-600 bg-rose-50", icon: Target };
+    }
+    if (hours >= 30 && weeks <= 5) {
+      return { label: "High ⚡", color: "text-orange-600 bg-orange-50", icon: Rocket };
+    }
+    if (hours <= 10 && weeks >= 6) {
+      return { label: "Light 🌱", color: "text-emerald-600 bg-emerald-50", icon: CheckCircle2 };
+    }
+    if (hours <= 20 && weeks > 5) {
+      return { label: "Balanced ⚖️", color: "text-blue-600 bg-blue-50", icon: TrendingUp };
+    }
+    
+    return { label: "Medium ⚖️", color: "text-amber-600 bg-amber-50", icon: Zap };
   };
 
   const handleNext = async () => {
@@ -99,7 +113,7 @@ export default function ProfileSetup() {
     }
   };
 
-  const feasibility = getFeasibility();
+  const intensity = getIntensity();
 
   return (
     <main className="min-h-screen w-full relative flex items-center justify-center p-4 md:p-8 overflow-hidden bg-slate-50">
@@ -287,14 +301,21 @@ export default function ProfileSetup() {
 
                 <div className="space-y-8">
                   <div className="flex justify-between items-end">
-                    <label className="text-sm font-black text-slate-900 tracking-tight">TOTAL HORIZON</label>
-                    <span className="text-4xl font-black text-purple-600">{formData.timeline}m</span>
+                    <div className="space-y-1">
+                      <label className="text-sm font-black text-slate-900 tracking-tight block">LEARNING DURATION</label>
+                      <span className="text-xs font-bold text-slate-400">
+                        {formData.timeline <= 4 && "Fast Track 🚀"}
+                        {formData.timeline > 4 && formData.timeline <= 6 && "Balanced ⚖️"}
+                        {formData.timeline > 6 && "Deep Focus 🧠"}
+                      </span>
+                    </div>
+                    <span className="text-4xl font-black text-purple-600">{formData.timeline} weeks</span>
                   </div>
                   <input 
                     type="range"
                     min="3"
-                    max="24"
-                    step="3"
+                    max="8"
+                    step="1"
                     value={formData.timeline}
                     onChange={(e) => setFormData({...formData, timeline: parseInt(e.target.value)})}
                     className="w-full h-1.5 bg-slate-100 rounded-full appearance-none cursor-pointer accent-transparent 
@@ -304,19 +325,19 @@ export default function ProfileSetup() {
                       [&::-webkit-slider-thumb]:hover:scale-110 [&::-webkit-slider-thumb]:transition-transform"
                   />
                   <div className="flex justify-between text-[10px] font-black text-slate-400">
-                    <span>3 MO</span>
-                    <span>12 MO</span>
-                    <span>24 MO</span>
+                    <span>3 WEEKS</span>
+                    <span>5 WEEKS</span>
+                    <span>8 WEEKS</span>
                   </div>
                 </div>
 
-                <div className={`p-8 rounded-[2.5rem] border-2 transition-all duration-700 flex items-center gap-6 ${feasibility.color.split(' ')[1]} ${feasibility.color.split(' ')[0].replace('text-', 'border-').replace('600', '200')}`}>
-                  <div className={`p-4 rounded-2xl bg-white shadow-sm ${feasibility.color.split(' ')[0]}`}>
-                    <feasibility.icon className="w-8 h-8" />
+                <div className={`p-8 rounded-[2.5rem] border-2 transition-all duration-700 flex items-center gap-6 ${intensity.color.split(' ')[1]} ${intensity.color.split(' ')[0].replace('text-', 'border-').replace('600', '200')}`}>
+                  <div className={`p-4 rounded-2xl bg-white shadow-sm ${intensity.color.split(' ')[0]}`}>
+                    <intensity.icon className="w-8 h-8" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Stability Mode</p>
-                    <p className="text-2xl font-black text-slate-900">{feasibility.label} Intensity</p>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Intensity Mode</p>
+                    <p className="text-2xl font-black text-slate-900">{intensity.label} Intensity</p>
                   </div>
                 </div>
               </motion.div>
