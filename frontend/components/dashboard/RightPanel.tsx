@@ -10,14 +10,24 @@ import {
   Target,
   ArrowRight
 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { formatDistanceToNow } from "date-fns";
 
 interface RightPanelProps {
   tasks: any[];
   activity: any[];
+  onToggleTask?: (task: any) => void;
 }
 
-export const RightPanel = ({ tasks, activity }: RightPanelProps) => {
+export const RightPanel = ({ tasks, activity, onToggleTask }: RightPanelProps) => {
   const [activeTab, setActiveTab] = useState<'tasks' | 'goals'>('tasks');
+  const router = useRouter();
+
+  const milestones = [
+    { title: "Complete Frontend Fundamentals", status: "completed" },
+    { title: "Build Full-Stack Project", status: "current" },
+    { title: "System Design Certificate", status: "upcoming" }
+  ];
 
   return (
     <div className="w-full flex flex-col gap-8 h-full">
@@ -51,7 +61,11 @@ export const RightPanel = ({ tasks, activity }: RightPanelProps) => {
             >
               {activeTab === 'tasks' ? (
                 tasks.map((task) => (
-                  <div key={task.id} className="p-4 bg-slate-50/50 hover:bg-white hover:shadow-xl hover:shadow-slate-100 border border-transparent hover:border-slate-100 rounded-3xl transition-all group cursor-pointer">
+                  <div 
+                    key={task.id} 
+                    onClick={() => onToggleTask?.(task)}
+                    className="p-4 bg-slate-50/50 hover:bg-white hover:shadow-xl hover:shadow-slate-100 border border-transparent hover:border-slate-100 rounded-3xl transition-all group cursor-pointer"
+                  >
                     <div className="flex items-start gap-4">
                       <div className="mt-1">
                         {task.status === "Done" ? (
@@ -77,16 +91,33 @@ export const RightPanel = ({ tasks, activity }: RightPanelProps) => {
                   </div>
                 ))
               ) : (
-                <div className="flex flex-col items-center justify-center py-10 text-center opacity-50">
-                  <Target className="w-12 h-12 text-slate-300 mb-4" />
-                  <p className="text-sm font-bold text-slate-400">Master Full-Stack Path</p>
-                  <p className="text-xs font-medium text-slate-400 mt-1">Goal completion at 45%</p>
+                <div className="space-y-4">
+                  {[
+                    { title: "Complete Frontend Fundamentals", status: "completed" },
+                    { title: "Build Full-Stack Project", status: "current" },
+                    { title: "System Design Certificate", status: "upcoming" }
+                  ].map((goal, idx) => (
+                    <div key={idx} className="flex items-center gap-4 p-4 rounded-3xl bg-slate-50/50 border border-slate-100/50">
+                      <div className={`w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 
+                        ${goal.status === 'completed' ? 'bg-emerald-50 text-emerald-500' : 
+                          goal.status === 'current' ? 'bg-blue-50 text-blue-500 animate-pulse' : 'bg-slate-100 text-slate-400'}`}>
+                        <Target className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <p className={`text-xs font-black ${goal.status === 'upcoming' ? 'text-slate-400' : 'text-slate-900'}`}>{goal.title}</p>
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{goal.status}</p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               )}
             </motion.div>
           </AnimatePresence>
 
-          <button className="w-full mt-6 flex items-center justify-center gap-2 text-xs font-black text-slate-400 hover:text-slate-900 transition-colors uppercase tracking-widest leading-none">
+          <button 
+            onClick={() => router.push('/roadmap')}
+            className="w-full mt-6 flex items-center justify-center gap-2 text-xs font-black text-slate-400 hover:text-slate-900 transition-colors uppercase tracking-widest leading-none"
+          >
             View full list <ArrowRight className="w-3 h-3" />
           </button>
         </div>
@@ -99,8 +130,8 @@ export const RightPanel = ({ tasks, activity }: RightPanelProps) => {
         <div className="relative flex flex-col gap-8">
           <div className="absolute top-2 left-6 bottom-4 w-0.5 bg-slate-50" />
           
-          {activity.map((item, idx) => (
-            <div key={item.id} className="relative flex gap-6 z-10">
+          {activity.length > 0 ? activity.map((item, idx) => (
+            <div key={item.id || idx} className="relative flex gap-6 z-10">
               <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 border-4 border-white shadow-lg
                 ${item.type === 'completed' ? "bg-emerald-500 text-white" : "bg-blue-600 text-white"}`}>
                 {item.type === 'completed' ? <CheckCircle2 className="w-5 h-5" /> : <Zap className="w-5 h-5" />}
@@ -108,13 +139,19 @@ export const RightPanel = ({ tasks, activity }: RightPanelProps) => {
               <div className="pt-1">
                 <p className="text-sm font-black text-slate-900 leading-tight mb-1">{item.action}</p>
                 <div className="flex items-center gap-2">
-                  <span className="text-[11px] font-bold text-slate-400 uppercase">{item.time}</span>
+                  <span className="text-[11px] font-bold text-slate-400 uppercase">
+                    {item.timestamp ? formatDistanceToNow(new Date(item.timestamp), { addSuffix: true }) : item.time}
+                  </span>
                   <div className="w-1 h-1 rounded-full bg-slate-200" />
-                  <span className="text-[11px] font-black text-blue-600 uppercase tracking-widest">Growth +20 XP</span>
+                  <span className="text-[11px] font-black text-blue-600 uppercase tracking-widest">Growth +{item.xp || 20} XP</span>
                 </div>
               </div>
             </div>
-          ))}
+          )) : (
+            <div className="text-center py-10">
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">No activity yet</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

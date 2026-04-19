@@ -1,52 +1,108 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useEffect, useMemo } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Sidebar } from "@/components/roadmap/Sidebar";
 import { ProfilePanel } from "@/components/dashboard/ProfilePanel";
 import { MainPanel } from "@/components/dashboard/MainPanel";
 import { RightPanel } from "@/components/dashboard/RightPanel";
-
-const dashboardData = {
-  user: {
-    name: "Ritik",
-    role: "Aspiring Full Stack Engineer",
-    avatar: "https://i.pravatar.cc/150?u=ritik",
-    skills: ["React", "Next.js", "TypeScript", "Node.js", "Tailwind", "Python"],
-    weeklyProgress: 65,
-  },
-  careerPath: [
-    { label: "Beginner", status: "completed" as const },
-    { label: "Intermediate", status: "current" as const },
-    { label: "Advanced", status: "upcoming" as const },
-  ],
-  skills: [
-    { subject: 'Frontend', A: 120, B: 110, fullMark: 150 },
-    { subject: 'Backend', A: 98, B: 130, fullMark: 150 },
-    { subject: 'Database', A: 86, B: 130, fullMark: 150 },
-    { subject: 'System Design', A: 99, B: 100, fullMark: 150 },
-    { subject: 'DevOps', A: 85, B: 90, fullMark: 150 },
-  ],
-  tasks: [
-    { id: 1, title: "Optimize Radar Chart", desc: "Refine gradients and labels", tag: "Frontend", status: "In Progress" },
-    { id: 2, title: "Backend API Auth", desc: "Secure endpoints with JWT", tag: "Backend", status: "To Do" },
-    { id: 3, title: "Responsive Layout", desc: "Test on mobile/tablet", tag: "UI/UX", status: "Done" },
-  ],
-  activity: [
-    { id: 1, type: "completed", action: "Completed week 3 roadmap", time: "2h ago" },
-    { id: 2, type: "started", action: "Started 'System Design' module", time: "5h ago" },
-    { id: 3, type: "started", action: "Updated profile expertise", time: "1d ago" },
-  ]
-};
+import { useDashboardStore } from "@/lib/store/useDashboardStore";
+import { Loader2, RefreshCcw } from "lucide-react";
 
 export default function DashboardPage() {
+  const { roadmap, skills, activity, userProfile, isLoading, error, fetchDashboardData, updateTaskStatus } = useDashboardStore();
+
+  useEffect(() => {
+    fetchDashboardData();
+  }, [fetchDashboardData]);
+
+  // Transform roadmap data for MainPanel and RightPanel
+  const careerPath = useMemo(() => {
+    if (!roadmap) return [];
+    const totalWeeks = roadmap.weeks.length;
+    if (totalWeeks === 0) return [];
+    
+    const phaseSize = Math.ceil(totalWeeks / 3);
+    const currentWeekInfo = roadmap.weeks.find(w => w.tasks.some(t => !t.completed)) || roadmap.weeks[roadmap.weeks.length - 1];
+    const currentWeekNum = currentWeekInfo?.week || 1;
+
+    return [
+      { label: "Beginner", status: currentWeekNum <= phaseSize ? "current" : "completed" },
+      { label: "Intermediate", status: currentWeekNum > phaseSize && currentWeekNum <= phaseSize * 2 ? "current" : (currentWeekNum > phaseSize * 2 ? "completed" : "upcoming") },
+      { label: "Advanced", status: currentWeekNum > phaseSize * 2 ? "current" : "upcoming" },
+    ] as const;
+  }, [roadmap]);
+
+  const skillMatrix = useMemo(() => {
+    if (!skills) return [];
+    return Object.keys(skills.current).map(key => ({
+      subject: key.charAt(0).toUpperCase() + key.slice(1),
+      A: skills.current[key],
+      B: skills.target[key],
+      fullMark: 100
+    }));
+  }, [skills]);
+
+  const currentTasks = useMemo(() => {
+    if (!roadmap) return [];
+    // Flatten all tasks but flag current week's ones
+    const currentWeekInfo = roadmap.weeks.find(w => w.tasks.some(t => !t.completed)) || roadmap.weeks[0];
+    if (!currentWeekInfo) return [];
+
+    return currentWeekInfo.tasks.map((t, idx) => ({
+      id: `${currentWeekInfo.week}-${idx}`,
+      week: currentWeekInfo.week,
+      title: t.title,
+      desc: t.description,
+      tag: t.tag || "Goal",
+      status: t.completed ? "Done" as const : "In Progress" as const
+    }));
+  }, [roadmap]);
+
+  const weeklyProgress = useMemo(() => {
+    if (!roadmap) return 0;
+    const allTasks = roadmap.weeks.flatMap(w => w.tasks);
+    if (allTasks.length === 0) return 0;
+    const completed = allTasks.filter(t => t.completed).length;
+    return Math.round((completed / allTasks.length) * 100);
+  }, [roadmap]);
+
+  const userData = useMemo(() => ({
+    name: userProfile?.name || "Ritik",
+    role: userProfile?.role || "Aspiring Full Stack Engineer",
+    avatar: userProfile?.avatar || "https://i.pravatar.cc/150?u=ritik",
+    skills: userProfile?.skills || [],
+    xp: activity.reduce((acc, curr) => acc + (curr.xp || 0), 0) + 12000,
+    weeklyProgress: weeklyProgress,
+  }), [userProfile, weeklyProgress, activity]);
+
+  if (isLoading && !roadmap) {
+    return (
+      <div className="flex items-center justify-center h-screen w-full bg-slate-50">
+        <Loader2 className="w-10 h-10 text-blue-600 animate-spin" />
+      </div>
+    );
+  }
+
+  if (error && !roadmap) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen w-full bg-slate-50 gap-4">
+        <p className="text-red-500 font-medium">{error}</p>
+        <button 
+          onClick={() => fetchDashboardData()}
+          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+        >
+          <RefreshCcw className="w-4 h-4" /> Retry
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="flex h-screen w-full bg-slate-50 overflow-hidden font-sans antialiased text-slate-900 selection:bg-blue-100 italic-none">
-      {/* Navigation Sidebar */}
       <Sidebar />
 
-      {/* Main Container */}
       <div className="flex-1 h-full overflow-y-auto relative scroll-smooth">
-        {/* Background Accents */}
         <div className="fixed top-[-5%] right-[-5%] w-[400px] h-[400px] bg-blue-400/5 blur-[120px] rounded-full pointer-events-none z-0" />
         <div className="fixed bottom-[-10%] left-[20%] w-[500px] h-[500px] bg-indigo-400/5 blur-[150px] rounded-full pointer-events-none z-0" />
 
@@ -56,19 +112,20 @@ export default function DashboardPage() {
             animate={{ opacity: 1, y: 0 }}
             className="grid grid-cols-1 lg:grid-cols-12 gap-10"
           >
-            {/* Left Panel - Profile & Progress */}
             <div className="lg:col-span-3">
-              <ProfilePanel user={dashboardData.user} />
+              <ProfilePanel user={userData} />
             </div>
 
-            {/* Center Panel - Skill Matrix & Path */}
             <div className="lg:col-span-6">
-              <MainPanel careerPath={dashboardData.careerPath} skills={dashboardData.skills} />
+              <MainPanel careerPath={careerPath} skills={skillMatrix} />
             </div>
 
-            {/* Right Panel - Tasks & Feed */}
             <div className="lg:col-span-3">
-              <RightPanel tasks={dashboardData.tasks} activity={dashboardData.activity} />
+              <RightPanel 
+                tasks={currentTasks} 
+                activity={activity} 
+                onToggleTask={(task) => updateTaskStatus(task.week, task.title, task.status !== "Done")}
+              />
             </div>
           </motion.div>
         </div>

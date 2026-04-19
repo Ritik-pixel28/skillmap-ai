@@ -38,7 +38,7 @@ export const ProfilePanel = ({ user }: ProfilePanelProps) => {
           </div>
           <div className="bg-slate-50 p-3 rounded-2xl text-center">
             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">XP</p>
-            <p className="text-sm font-black text-slate-900">12k</p>
+            <p className="text-sm font-black text-slate-900">{user.xp || "0"}</p>
           </div>
         </div>
       </div>
@@ -50,17 +50,21 @@ export const ProfilePanel = ({ user }: ProfilePanelProps) => {
           <Star className="w-4 h-4 text-amber-400" />
         </div>
         <div className="flex flex-wrap gap-2">
-          {user.skills.map((skill, i) => (
-            <motion.span
-              key={skill}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: i * 0.05 }}
-              className="px-3 py-1.5 bg-blue-50 text-blue-600 text-xs font-bold rounded-xl border border-blue-100/50"
-            >
-              {skill}
-            </motion.span>
-          ))}
+          {user.skills && user.skills.length > 0 ? (
+            user.skills.map((skill, i) => (
+              <motion.span
+                key={skill}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: i * 0.05 }}
+                className="px-3 py-1.5 bg-blue-50 text-blue-600 text-xs font-bold rounded-xl border border-blue-100/50"
+              >
+                {skill}
+              </motion.span>
+            ))
+          ) : (
+            <p className="text-xs font-bold text-slate-400 italic">No skills added yet</p>
+          )}
         </div>
       </div>
 
