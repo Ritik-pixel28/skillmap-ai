@@ -23,7 +23,6 @@ export async function apiRequest(endpoint: string, options: RequestInit = {}) {
 
     const data = await response.json();
     if (!response.ok) {
-      // Handle 401 Unauthorized by redirecting to login
       if (response.status === 401 && typeof window !== 'undefined') {
         localStorage.removeItem('token');
         window.location.href = '/auth/login';
@@ -44,4 +43,8 @@ export const generateRoadmap = async () => {
   return await apiRequest('/roadmap/generate', {
     method: 'POST',
   });
+};
+
+export const getUserProfile = async () => {
+  return await apiRequest('/profile');
 };
