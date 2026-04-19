@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, JSON
 from sqlalchemy.orm import relationship
 from app.database import Base
 
@@ -13,5 +13,6 @@ class Profile(Base):
     skill_level = Column(String, nullable=False)
     weekly_hours = Column(Integer, nullable=False)
     timeline = Column(Integer, nullable=False)
+    skills = Column(JSON, nullable=True)
 
     user = relationship("User", backref="profile", uselist=False)
