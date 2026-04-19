@@ -11,7 +11,9 @@ from app.api import (
     feasibility_routes, 
     roadmap_routes,
     assignment_routes,
-    progress_routes
+    progress_routes,
+    user_routes,
+    resource_routes
 )
 from app.database import engine, Base
 from app.core.logger import logger
@@ -21,16 +23,15 @@ from app.models.user import User
 from app.models.profile import Profile
 from app.models.assignment import Assignment
 from app.models.roadmap import Roadmap, RoadmapWeek
+from app.models.activity import Activity
 
-# Create database tables
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="SkillMap AI API")
 
-# Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # For demo purposes, allow all origins
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -38,15 +39,16 @@ app.add_middleware(
 
 @app.on_event("startup")
 async def startup_event():
-    logger.info("SkillMap AI API (Phase 3) is starting up...")
+    logger.info("SkillMap AI API starting up...")
 
-# Include all routers
 app.include_router(auth_routes.router)
 app.include_router(profile_routes.router)
 app.include_router(feasibility_routes.router)
 app.include_router(roadmap_routes.router)
 app.include_router(assignment_routes.router)
 app.include_router(progress_routes.router)
+app.include_router(user_routes.router)
+app.include_router(resource_routes.router)
 
 @app.get("/")
 def read_root():
