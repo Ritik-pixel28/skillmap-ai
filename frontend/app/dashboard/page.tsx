@@ -7,6 +7,13 @@ import { ProfilePanel } from "@/components/dashboard/ProfilePanel";
 import { MainPanel } from "@/components/dashboard/MainPanel";
 import { RightPanel } from "@/components/dashboard/RightPanel";
 import { useDashboardStore } from "@/lib/store/useDashboardStore";
+import { 
+  CareerStage, 
+  Skill, 
+  DashboardTask, 
+  DashboardActivity, 
+  User 
+} from "@/lib/types";
 import { Loader2, RefreshCcw } from "lucide-react";
 
 export default function DashboardPage() {
@@ -17,7 +24,7 @@ export default function DashboardPage() {
   }, [fetchDashboardData]);
 
   // Transform roadmap data for MainPanel and RightPanel
-  const careerPath = useMemo(() => {
+  const careerPath = useMemo<ReadonlyArray<CareerStage>>(() => {
     if (!roadmap) return [];
     const totalWeeks = roadmap.weeks.length;
     if (totalWeeks === 0) return [];
@@ -30,10 +37,10 @@ export default function DashboardPage() {
       { label: "Beginner", status: currentWeekNum <= phaseSize ? "current" : "completed" },
       { label: "Intermediate", status: currentWeekNum > phaseSize && currentWeekNum <= phaseSize * 2 ? "current" : (currentWeekNum > phaseSize * 2 ? "completed" : "upcoming") },
       { label: "Advanced", status: currentWeekNum > phaseSize * 2 ? "current" : "upcoming" },
-    ] as const;
+    ];
   }, [roadmap]);
 
-  const skillMatrix = useMemo(() => {
+  const skillMatrix = useMemo<ReadonlyArray<Skill>>(() => {
     if (!skills) return [];
     return Object.keys(skills.current).map(key => ({
       subject: key.charAt(0).toUpperCase() + key.slice(1),
@@ -43,7 +50,7 @@ export default function DashboardPage() {
     }));
   }, [skills]);
 
-  const currentTasks = useMemo(() => {
+  const currentTasks = useMemo<ReadonlyArray<DashboardTask>>(() => {
     if (!roadmap) return [];
     // Flatten all tasks but flag current week's ones
     const currentWeekInfo = roadmap.weeks.find(w => w.tasks.some(t => !t.completed)) || roadmap.weeks[0];
@@ -67,7 +74,7 @@ export default function DashboardPage() {
     return Math.round((completed / allTasks.length) * 100);
   }, [roadmap]);
 
-  const userData = useMemo(() => ({
+  const userData = useMemo<User>(() => ({
     name: userProfile?.name || "Ritik",
     role: userProfile?.role || "Aspiring Full Stack Engineer",
     avatar: userProfile?.avatar || "https://i.pravatar.cc/150?u=ritik",
