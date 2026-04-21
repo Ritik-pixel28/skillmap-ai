@@ -13,10 +13,12 @@ import {
 import { useRouter } from "next/navigation";
 import { formatDistanceToNow } from "date-fns";
 
+import { DashboardTask, DashboardActivity } from "@/lib/types";
+
 interface RightPanelProps {
-  tasks: any[];
-  activity: any[];
-  onToggleTask?: (task: any) => void;
+  tasks: ReadonlyArray<DashboardTask>;
+  activity: ReadonlyArray<DashboardActivity>;
+  onToggleTask?: (task: DashboardTask) => void;
 }
 
 export const RightPanel = ({ tasks, activity, onToggleTask }: RightPanelProps) => {
@@ -140,7 +142,9 @@ export const RightPanel = ({ tasks, activity, onToggleTask }: RightPanelProps) =
                 <p className="text-sm font-black text-slate-900 leading-tight mb-1">{item.action}</p>
                 <div className="flex items-center gap-2">
                   <span className="text-[11px] font-bold text-slate-400 uppercase">
-                    {item.timestamp ? formatDistanceToNow(new Date(item.timestamp), { addSuffix: true }) : item.time}
+                    {item.timestamp 
+                      ? formatDistanceToNow(new Date(item.timestamp), { addSuffix: true }) 
+                      : (item.time || "Just now")}
                   </span>
                   <div className="w-1 h-1 rounded-full bg-slate-200" />
                   <span className="text-[11px] font-black text-blue-600 uppercase tracking-widest">Growth +{item.xp || 20} XP</span>

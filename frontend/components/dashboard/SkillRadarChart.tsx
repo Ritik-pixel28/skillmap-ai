@@ -8,8 +8,10 @@ import {
   ResponsiveContainer 
 } from 'recharts';
 
+import { Skill } from "@/lib/types";
+
 interface SkillRadarChartProps {
-  data: any[];
+  data: ReadonlyArray<Skill>;
 }
 
 export const SkillRadarChart = ({ data }: SkillRadarChartProps) => {

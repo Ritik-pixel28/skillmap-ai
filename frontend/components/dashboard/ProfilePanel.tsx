@@ -3,14 +3,10 @@
 import { motion } from "framer-motion";
 import { CheckCircle2, TrendingUp, Brain, Star } from "lucide-react";
 
+import { User } from "@/lib/types";
+
 interface ProfilePanelProps {
-  user: {
-    name: string;
-    role: string;
-    avatar: string;
-    skills: string[];
-    weeklyProgress: number;
-  };
+  user: User;
 }
 
 export const ProfilePanel = ({ user }: ProfilePanelProps) => {
@@ -53,7 +49,7 @@ export const ProfilePanel = ({ user }: ProfilePanelProps) => {
           {user.skills && user.skills.length > 0 ? (
             user.skills.map((skill, i) => (
               <motion.span
-                key={skill}
+                key={`${skill}-${i}`}
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: i * 0.05 }}

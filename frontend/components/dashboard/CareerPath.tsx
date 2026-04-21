@@ -3,11 +3,10 @@
 import { motion } from "framer-motion";
 import { Check, ChevronRight } from "lucide-react";
 
+import { CareerStage } from "@/lib/types";
+
 interface CareerPathProps {
-  milestones: {
-    label: string;
-    status: 'completed' | 'current' | 'upcoming';
-  }[];
+  milestones: ReadonlyArray<CareerStage>;
 }
 
 export const CareerPath = ({ milestones }: CareerPathProps) => {

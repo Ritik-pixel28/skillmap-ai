@@ -4,9 +4,11 @@ import { CareerPath } from "./CareerPath";
 import { SkillRadarChart } from "./SkillRadarChart";
 import { LearningResources } from "./LearningResources";
 
+import { CareerStage, Skill } from "@/lib/types";
+
 interface MainPanelProps {
-  careerPath: any[];
-  skills: any[];
+  careerPath: ReadonlyArray<CareerStage>;
+  skills: ReadonlyArray<Skill>;
 }
 
 export const MainPanel = ({ careerPath, skills }: MainPanelProps) => {
