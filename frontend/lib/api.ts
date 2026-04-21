@@ -45,6 +45,45 @@ export const generateRoadmap = async () => {
   });
 };
 
+export const getRoadmap = async () => {
+  return await apiRequest('/roadmap/current');
+};
+
+export const updateTaskStatus = async (weekNumber: number, taskTitle: string, completed: boolean) => {
+  return await apiRequest('/roadmap/task', {
+    method: 'PATCH',
+    body: JSON.stringify({
+      week_number: weekNumber,
+      task_title: taskTitle,
+      completed
+    })
+  });
+};
+
 export const getUserProfile = async () => {
   return await apiRequest('/profile');
+};
+
+export const getStatsOverview = async () => {
+  return await apiRequest('/stats/overview');
+};
+
+export const getXpHistory = async (days: number = 7) => {
+  return await apiRequest(`/stats/xp-history?days=${days}`);
+};
+
+export const getHeatmapData = async () => {
+  return await apiRequest('/stats/heatmap');
+};
+
+export const getInsights = async () => {
+  return await apiRequest('/stats/insights');
+};
+
+export const getSkillsBreakdown = async () => {
+  return await apiRequest('/stats/skills-breakdown');
+};
+
+export const getCategoryPerformance = async () => {
+  return await apiRequest('/stats/category-performance');
 };
