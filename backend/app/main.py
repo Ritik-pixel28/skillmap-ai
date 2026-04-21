@@ -25,8 +25,12 @@ from app.models.profile import Profile
 from app.models.assignment import Assignment
 from app.models.roadmap import Roadmap, RoadmapWeek
 from app.models.activity import Activity
+from app.models.library import Resource, SavedResource, RoadmapResource
 
 Base.metadata.create_all(bind=engine)
+
+# Seed the library with resources if empty
+from app.services.library_service import seed_resources
 
 app = FastAPI(title="SkillMap AI API")
 
@@ -41,6 +45,12 @@ app.add_middleware(
 @app.on_event("startup")
 async def startup_event():
     logger.info("SkillMap AI API starting up...")
+    from app.database import SessionLocal
+    db = SessionLocal()
+    try:
+        seed_resources(db)
+    finally:
+        db.close()
 
 app.include_router(auth_routes.router)
 app.include_router(profile_routes.router)

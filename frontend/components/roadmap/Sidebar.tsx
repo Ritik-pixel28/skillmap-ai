@@ -21,7 +21,7 @@ export const Sidebar = () => {
     { icon: Layout, label: "Dashboard", path: "/dashboard" },
     { icon: Calendar, label: "Roadmap", path: "/roadmap" },
     { icon: BarChart2, label: "Stats", path: "/stats" },
-    { icon: Layers, label: "Library", path: "#" },
+    { icon: Layers, label: "Library", path: "/library" },
     { icon: MessageSquare, label: "Community", path: "#" },
     { icon: User, label: "Profile", path: "#" },
     { icon: Settings, label: "Settings", path: "#" },
