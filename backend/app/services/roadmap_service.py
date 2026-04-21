@@ -21,6 +21,7 @@ def generate_user_roadmap(db: Session, user_id: int):
     profile.timeline = min(profile.timeline, 8)
 
     try:
+        ai_data = ai_service.generate_ai_roadmap(profile)
         db_roadmap = db.query(Roadmap).filter(Roadmap.user_id == user_id).first()
         if not db_roadmap:
             db_roadmap = Roadmap(user_id=user_id, title=ai_data["title"])

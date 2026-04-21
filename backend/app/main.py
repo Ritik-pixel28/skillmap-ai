@@ -13,7 +13,8 @@ from app.api import (
     assignment_routes,
     progress_routes,
     user_routes,
-    resource_routes
+    resource_routes,
+    stats_routes
 )
 from app.database import engine, Base
 from app.core.logger import logger
@@ -49,6 +50,7 @@ app.include_router(assignment_routes.router)
 app.include_router(progress_routes.router)
 app.include_router(user_routes.router)
 app.include_router(resource_routes.router)
+app.include_router(stats_routes.router)
 
 @app.get("/")
 def read_root():
