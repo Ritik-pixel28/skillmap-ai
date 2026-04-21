@@ -20,7 +20,7 @@ export const Sidebar = () => {
   const menuItems = [
     { icon: Layout, label: "Dashboard", path: "/dashboard" },
     { icon: Calendar, label: "Roadmap", path: "/roadmap" },
-    { icon: BarChart2, label: "Stats", path: "#" },
+    { icon: BarChart2, label: "Stats", path: "/stats" },
     { icon: Layers, label: "Library", path: "#" },
     { icon: MessageSquare, label: "Community", path: "#" },
     { icon: User, label: "Profile", path: "#" },

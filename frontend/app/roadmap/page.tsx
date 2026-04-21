@@ -5,14 +5,20 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Sidebar } from "@/components/roadmap/Sidebar";
 import { ProjectPanel } from "@/components/roadmap/ProjectPanel";
 import { TimelineView } from "@/components/roadmap/TimelineView";
-import { generateRoadmap, getAuthToken } from "@/lib/api";
+import { getAuthToken } from "@/lib/api";
 import { useRouter } from "next/navigation";
 import { AlertCircle, RefreshCw } from "lucide-react";
+import { useRoadmapStore } from "@/lib/store/useRoadmapStore";
 
 export default function Roadmap() {
-  const [roadmapData, setRoadmapData] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { 
+    roadmap: roadmapData, 
+    isLoading: loading, 
+    error, 
+    fetchRoadmap, 
+    toggleTask 
+  } = useRoadmapStore();
+
   const [selectedWeek, setSelectedWeek] = useState<number | null>(null);
   const [selectedTask, setSelectedTask] = useState<any | null>(null);
   const router = useRouter();
@@ -22,66 +28,28 @@ export default function Roadmap() {
     setSelectedTask(null);
   };
 
-  const fetchRoadmap = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const token = getAuthToken();
-      if (!token) {
-        router.push("/auth/login");
-        return;
-      }
+  const initFetch = async () => {
+    const token = getAuthToken();
+    if (!token) {
+      router.push("/auth/login");
+      return;
+    }
+    await fetchRoadmap();
+  };
 
-      const result = await generateRoadmap();
-
-      if (result.success) {
-        const rawData = result.data;
-        const normalizedWeeks = rawData?.weeks?.map((w: any) => ({
-          week: w.week || w.week_number,
-          title: w.title || w.content,
-          tasks: (w.tasks || []).map((t: any, tidx: number) => {
-             if (typeof t === 'string') return { id: tidx, title: t, duration: "N/A", completed: false, subtopics: [] };
-             return { ...t, id: t.id || tidx, completed: !!t.completed, subtopics: t.subtopics || [] };
-          })
-        })) || [];
-
-        const normalizedData = {
-          ...rawData,
-          weeks: normalizedWeeks
-        };
-
-        setRoadmapData(normalizedData);
-      } else {
-        setError(result.message || "Failed to generate roadmap");
-      }
-    } catch (err: any) {
-      setError(err.message || "An unexpected error occurred");
-    } finally {
-      setLoading(false);
+  const toggleTaskCompletion = async (weekNumber: number, taskId: any) => {
+    // We need the task title for the backend API
+    const task = roadmapData?.weeks
+      ?.find(w => w.week === weekNumber)
+      ?.tasks.find(t => t.id === taskId);
+    
+    if (task) {
+      await toggleTask(weekNumber, task.title, taskId);
     }
   };
 
-  const toggleTaskCompletion = (weekNumber: number, taskId: any) => {
-    setRoadmapData((prev: any) => {
-      if (!prev) return prev;
-      return {
-        ...prev,
-        weeks: prev.weeks.map((w: any) => {
-          if (w.week !== weekNumber) return w;
-          return {
-            ...w,
-            tasks: w.tasks.map((t: any) => {
-              if (t.id !== taskId) return t;
-              return { ...t, completed: !t.completed };
-            })
-          };
-        })
-      };
-    });
-  };
-
   useEffect(() => {
-    fetchRoadmap();
+    initFetch();
   }, []);
 
   return (
