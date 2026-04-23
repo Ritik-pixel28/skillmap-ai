@@ -1,53 +1,19 @@
 import { create } from 'zustand';
 import { apiRequest } from '../api';
-
-interface Task {
-  title: string;
-  description: string;
-  completed: boolean;
-  duration?: string;
-  tag?: string;
-}
-
-interface Week {
-  week: number;
-  title: string;
-  tasks: Task[];
-}
-
-interface Roadmap {
-  id: number;
-  title: string;
-  weeks: Week[];
-}
-
-interface Activity {
-  id: number;
-  type: string;
-  action: string;
-  xp: number;
-  timestamp: string;
-  time: string;
-}
-
-interface UserProfile {
-  name: string;
-  role: string;
-  avatar: string;
-  skills: string[];
-}
-
-interface SkillData {
-  current: Record<string, number>;
-  target: Record<string, number>;
-}
+import { 
+  Roadmap, 
+  Skill, 
+  DashboardActivity, 
+  User, 
+  ApiResponse 
+} from '../types';
 
 interface DashboardState {
-  userProfile: UserProfile | null;
+  userProfile: User | null;
   roadmap: Roadmap | null;
-  skills: SkillData | null;
-  activity: Activity[];
-  recommendations: any[];
+  skills: { current: Record<string, number>; target: Record<string, number> } | null;
+  activity: DashboardActivity[];
+  recommendations: { id: number; title: string; type: string; url?: string }[];
   isLoading: boolean;
   error: string | null;
 
@@ -68,11 +34,11 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
     set({ isLoading: true, error: null });
     try {
       const [roadmapRes, skillsRes, activityRes, resourcesRes, profileRes] = await Promise.all([
-        apiRequest('/roadmap/current'),
-        apiRequest('/user/skills'),
-        apiRequest('/user/activity'),
-        apiRequest('/resources/recommended'),
-        apiRequest('/profile')
+        apiRequest<ApiResponse<Roadmap>>('/roadmap/current'),
+        apiRequest<ApiResponse<{ current: Record<string, number>; target: Record<string, number> }>>('/user/skills'),
+        apiRequest<ApiResponse<DashboardActivity[]>>('/user/activity'),
+        apiRequest<ApiResponse<{ id: number; title: string; type: string; url?: string }[]>>('/resources/recommended'),
+        apiRequest<ApiResponse<User>>('/profile')
       ]);
 
       set({
@@ -105,7 +71,7 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
     set({ roadmap: { ...previousRoadmap, weeks: newWeeks } });
 
     try {
-      await apiRequest('/roadmap/task', {
+      await apiRequest<ApiResponse<any>>('/roadmap/task', {
         method: 'PATCH',
         body: JSON.stringify({
           week_number: weekNumber,
@@ -113,7 +79,7 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
           completed
         })
       });
-      const activityRes = await apiRequest('/user/activity');
+      const activityRes = await apiRequest<ApiResponse<DashboardActivity[]>>('/user/activity');
       set({ activity: activityRes.data });
     } catch (err: any) {
       set({ roadmap: previousRoadmap, error: `Failed to update task: ${err.message}` });

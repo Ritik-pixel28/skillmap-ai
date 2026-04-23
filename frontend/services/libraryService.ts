@@ -1,4 +1,5 @@
 import { apiRequest } from '@/lib/api';
+import { ApiResponse } from '@/lib/types';
 
 export interface Resource {
   id: number;
@@ -14,13 +15,6 @@ export interface Resource {
   is_saved: boolean;
 }
 
-export interface APIResourceResponse {
-  success: boolean;
-  data: Resource[] | null;
-  message?: string;
-  error?: string;
-}
-
 export const getAllResources = async (params?: {
   search?: string;
   type?: string;
@@ -31,39 +25,39 @@ export const getAllResources = async (params?: {
   if (params?.type) query.set('type', params.type);
   if (params?.difficulty) query.set('difficulty', params.difficulty);
   const qs = query.toString() ? `?${query.toString()}` : '';
-  const res: APIResourceResponse = await apiRequest(`/resources${qs}`);
+  const res = await apiRequest<ApiResponse<Resource[]>>(`/resources${qs}`);
   return res.data ?? [];
 };
 
 export const getRecommendedResources = async (): Promise<Resource[]> => {
-  const res: APIResourceResponse = await apiRequest('/resources/recommended');
+  const res = await apiRequest<ApiResponse<Resource[]>>('/resources/recommended');
   return res.data ?? [];
 };
 
 export const getSavedResources = async (): Promise<Resource[]> => {
-  const res: APIResourceResponse = await apiRequest('/resources/saved');
+  const res = await apiRequest<ApiResponse<Resource[]>>('/resources/saved');
   return res.data ?? [];
 };
 
 export const saveResource = async (resourceId: number): Promise<boolean> => {
-  const res = await apiRequest('/resources/save', {
+  const res = await apiRequest<ApiResponse<any>>('/resources/save', {
     method: 'POST',
     body: JSON.stringify({ resource_id: resourceId }),
   });
-  return res.success as boolean;
+  return res.success;
 };
 
 export const unsaveResource = async (resourceId: number): Promise<boolean> => {
-  const res = await apiRequest(`/resources/save/${resourceId}`, {
+  const res = await apiRequest<ApiResponse<any>>(`/resources/save/${resourceId}`, {
     method: 'DELETE',
   });
-  return res.success as boolean;
+  return res.success;
 };
 
 export const linkResource = async (resourceId: number, weekNumber: number): Promise<boolean> => {
-  const res = await apiRequest('/resources/link', {
+  const res = await apiRequest<ApiResponse<any>>('/resources/link', {
     method: 'POST',
     body: JSON.stringify({ resource_id: resourceId, week_number: weekNumber }),
   });
-  return res.success as boolean;
+  return res.success;
 };

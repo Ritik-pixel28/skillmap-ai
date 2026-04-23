@@ -3,11 +3,7 @@
 import { motion } from "framer-motion";
 import { Lightbulb, TrendingUp, AlertCircle, Info } from "lucide-react";
 
-interface Insight {
-  type: string;
-  text: string;
-  positive: boolean;
-}
+import { Insight } from "@/lib/types";
 
 interface InsightCardProps {
   insights: Insight[];

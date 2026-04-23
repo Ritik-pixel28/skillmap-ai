@@ -11,7 +11,6 @@ import {
   CareerStage, 
   Skill, 
   DashboardTask, 
-  DashboardActivity, 
   User 
 } from "@/lib/types";
 import { Loader2, RefreshCcw } from "lucide-react";
@@ -25,9 +24,9 @@ export default function DashboardPage() {
 
   // Transform roadmap data for MainPanel and RightPanel
   const careerPath = useMemo<ReadonlyArray<CareerStage>>(() => {
-    if (!roadmap) return [];
+    if (!roadmap) return [] as CareerStage[];
     const totalWeeks = roadmap.weeks.length;
-    if (totalWeeks === 0) return [];
+    if (totalWeeks === 0) return [] as CareerStage[];
     
     const phaseSize = Math.ceil(totalWeeks / 3);
     const currentWeekInfo = roadmap.weeks.find(w => w.tasks.some(t => !t.completed)) || roadmap.weeks[roadmap.weeks.length - 1];
@@ -37,24 +36,24 @@ export default function DashboardPage() {
       { label: "Beginner", status: currentWeekNum <= phaseSize ? "current" : "completed" },
       { label: "Intermediate", status: currentWeekNum > phaseSize && currentWeekNum <= phaseSize * 2 ? "current" : (currentWeekNum > phaseSize * 2 ? "completed" : "upcoming") },
       { label: "Advanced", status: currentWeekNum > phaseSize * 2 ? "current" : "upcoming" },
-    ];
+    ] as CareerStage[];
   }, [roadmap]);
 
   const skillMatrix = useMemo<ReadonlyArray<Skill>>(() => {
-    if (!skills) return [];
+    if (!skills) return [] as Skill[];
     return Object.keys(skills.current).map(key => ({
       subject: key.charAt(0).toUpperCase() + key.slice(1),
       A: skills.current[key],
       B: skills.target[key],
       fullMark: 100
-    }));
+    })) as Skill[];
   }, [skills]);
 
   const currentTasks = useMemo<ReadonlyArray<DashboardTask>>(() => {
-    if (!roadmap) return [];
+    if (!roadmap) return [] as DashboardTask[];
     // Flatten all tasks but flag current week's ones
     const currentWeekInfo = roadmap.weeks.find(w => w.tasks.some(t => !t.completed)) || roadmap.weeks[0];
-    if (!currentWeekInfo) return [];
+    if (!currentWeekInfo) return [] as DashboardTask[];
 
     return currentWeekInfo.tasks.map((t, idx) => ({
       id: `${currentWeekInfo.week}-${idx}`,
@@ -63,7 +62,7 @@ export default function DashboardPage() {
       desc: t.description,
       tag: t.tag || "Goal",
       status: t.completed ? "Done" as const : "In Progress" as const
-    }));
+    })) as DashboardTask[];
   }, [roadmap]);
 
   const weeklyProgress = useMemo(() => {
@@ -106,7 +105,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="flex h-screen w-full bg-slate-50 overflow-hidden font-sans antialiased text-slate-900 selection:bg-blue-100 italic-none">
+    <div className="flex h-screen w-full bg-slate-50 overflow-hidden font-sans antialiased text-slate-900 selection:bg-blue-100">
       <Sidebar />
 
       <div className="flex-1 h-full overflow-y-auto relative scroll-smooth">

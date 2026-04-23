@@ -22,7 +22,7 @@ export const XPGrowthChart = ({ data, viewMode, onToggleView }: XPGrowthChartPro
   // Find peak day
   const peak = data.reduce((max, obj) => (obj.xp > max.xp ? obj : max), data[0] || { xp: 0 });
 
-  const CustomTooltip = ({ active, payload, label }: any) => {
+  const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?: any[]; label?: string }) => {
     if (active && payload && payload.length) {
       return (
         <div className="bg-slate-900 text-white p-4 rounded-2xl shadow-2xl border border-slate-800 backdrop-blur-md bg-opacity-90">
@@ -65,8 +65,8 @@ export const XPGrowthChart = ({ data, viewMode, onToggleView }: XPGrowthChartPro
         </div>
       </div>
 
-      <div className="flex-1 w-full">
-        <ResponsiveContainer width="100%" height="100%">
+      <div className="flex-1 w-full mt-4">
+        <ResponsiveContainer width="100%" height={300}>
           <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
             <defs>
               <linearGradient id="colorXp" x1="0" y1="0" x2="0" y2="1">

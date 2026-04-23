@@ -3,28 +3,10 @@ import { getRoadmap, updateTaskStatus, generateRoadmap } from '../api';
 import { useStatsStore } from './useStatsStore';
 import { useDashboardStore } from './useDashboardStore';
 
-interface Task {
-  id: string | number;
-  title: string;
-  duration?: string;
-  completed: boolean;
-  subtopics?: string[];
-}
-
-interface Week {
-  week: number;
-  title: string;
-  tasks: Task[];
-}
-
-interface RoadmapData {
-  id: number;
-  title: string;
-  weeks: Week[];
-}
+import { Roadmap } from '../types';
 
 interface RoadmapState {
-  roadmap: RoadmapData | null;
+  roadmap: Roadmap | null;
   isLoading: boolean;
   error: string | null;
 
@@ -45,11 +27,23 @@ export const useRoadmapStore = create<RoadmapState>((set, get) => ({
       if (response.success && response.data) {
         const rawData = response.data;
         const normalizedWeeks = rawData.weeks.map((w: any) => ({
-          week: w.week || w.week_number,
-          title: w.title || w.content,
+          week: w.week || w.week_number || 0,
+          title: w.title || w.content || "Untitled Week",
           tasks: (w.tasks || []).map((t: any, tidx: number) => {
-            if (typeof t === 'string') return { id: tidx, title: t, duration: "N/A", completed: false, subtopics: [] };
-            return { ...t, id: t.id || tidx, completed: !!t.completed, subtopics: t.subtopics || [] };
+            if (typeof t === 'string') return { 
+              id: `${w.week}-${tidx}`, 
+              title: t, 
+              description: "", 
+              completed: false, 
+              duration: "N/A" 
+            };
+            return { 
+              ...t, 
+              id: t.id || `${w.week}-${tidx}`, 
+              description: t.description || "",
+              completed: !!t.completed, 
+              duration: t.duration || "N/A"
+            };
           })
         }));
         set({ roadmap: { ...rawData, weeks: normalizedWeeks }, isLoading: false });
@@ -68,11 +62,23 @@ export const useRoadmapStore = create<RoadmapState>((set, get) => ({
       if (response.success && response.data) {
         const rawData = response.data;
         const normalizedWeeks = rawData.weeks.map((w: any) => ({
-          week: w.week || w.week_number,
-          title: w.title || w.content,
+          week: w.week || w.week_number || 0,
+          title: w.title || w.content || "Untitled Week",
           tasks: (w.tasks || []).map((t: any, tidx: number) => {
-            if (typeof t === 'string') return { id: tidx, title: t, duration: "N/A", completed: false, subtopics: [] };
-            return { ...t, id: t.id || tidx, completed: !!t.completed, subtopics: t.subtopics || [] };
+            if (typeof t === 'string') return { 
+              id: `${w.week}-${tidx}`, 
+              title: t, 
+              description: "", 
+              completed: false, 
+              duration: "N/A" 
+            };
+            return { 
+              ...t, 
+              id: t.id || `${w.week}-${tidx}`, 
+              description: t.description || "",
+              completed: !!t.completed, 
+              duration: t.duration || "N/A"
+            };
           })
         }));
         set({ roadmap: { ...rawData, weeks: normalizedWeeks }, isLoading: false });

@@ -1,12 +1,9 @@
 import { motion } from "framer-motion";
 import { Clock, CheckCircle2, Circle } from "lucide-react";
 
-interface Task {
-  id: any;
-  title: string;
-  description?: string;
-  duration?: string;
-  completed: boolean;
+import { Task } from "@/lib/types";
+
+interface TimelineTask extends Task {
   week?: number;
   weekTitle?: string;
   subtopics?: string[];
@@ -14,7 +11,7 @@ interface Task {
 }
 
 interface TimelineCardProps {
-  task: Task;
+  task: TimelineTask;
   index: number;
   isLeft: boolean;
   onToggle: () => void;
