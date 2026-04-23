@@ -13,6 +13,8 @@ import {
   Plus
 } from "lucide-react";
 
+import { UserAvatar } from "@/components/shared/UserAvatar";
+
 export const Sidebar = () => {
   const router = useRouter();
   const pathname = usePathname();
@@ -23,8 +25,8 @@ export const Sidebar = () => {
     { icon: BarChart2, label: "Stats", path: "/stats" },
     { icon: Layers, label: "Library", path: "/library" },
     { icon: MessageSquare, label: "Community", path: "#" },
-    { icon: User, label: "Profile", path: "#" },
-    { icon: Settings, label: "Settings", path: "#" },
+    { icon: User, label: "Profile", path: "/settings#profile", isAvatar: true },
+    { icon: Settings, label: "Settings", path: "/settings" },
   ];
 
   return (
@@ -51,7 +53,11 @@ export const Sidebar = () => {
                   : "text-slate-400 hover:bg-white/50 hover:text-slate-600"
                 }`}
             >
-              <item.icon className="w-6 h-6" />
+              {'isAvatar' in item ? (
+                <UserAvatar size="sm" showBadge={isActive} />
+              ) : (
+                <item.icon className="w-6 h-6" />
+              )}
             </motion.button>
           );
         })}

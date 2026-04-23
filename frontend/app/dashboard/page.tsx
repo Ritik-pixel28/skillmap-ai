@@ -13,14 +13,20 @@ import {
   DashboardTask, 
   User 
 } from "@/lib/types";
+import { useProfileStore } from "@/lib/store/useProfileStore";
 import { Loader2, RefreshCcw } from "lucide-react";
 
 export default function DashboardPage() {
-  const { roadmap, skills, activity, userProfile, isLoading, error, fetchDashboardData, updateTaskStatus } = useDashboardStore();
+  const { roadmap, skills, activity, isLoading, error, fetchDashboardData, updateTaskStatus } = useDashboardStore();
+  const { name, role, avatar, xp, rank, fetchProfile: fetchProfileData, lastUpdated } = useProfileStore();
 
   useEffect(() => {
     fetchDashboardData();
-  }, [fetchDashboardData]);
+    // Only fetch if stale
+    if (!lastUpdated || Date.now() - lastUpdated > 5 * 60 * 1000) {
+      fetchProfileData();
+    }
+  }, [fetchDashboardData, fetchProfileData, lastUpdated]);
 
   // Transform roadmap data for MainPanel and RightPanel
   const careerPath = useMemo<ReadonlyArray<CareerStage>>(() => {
@@ -73,14 +79,14 @@ export default function DashboardPage() {
     return Math.round((completed / allTasks.length) * 100);
   }, [roadmap]);
 
-  const userData = useMemo<User>(() => ({
-    name: userProfile?.name || "Ritik",
-    role: userProfile?.role || "Aspiring Full Stack Engineer",
-    avatar: userProfile?.avatar || "https://i.pravatar.cc/150?u=ritik",
-    skills: userProfile?.skills || [],
-    xp: activity.reduce((acc, curr) => acc + (curr.xp || 0), 0) + 12000,
+  const userData = useMemo(() => ({
+    name: name,
+    role: role,
+    avatar: avatar || "https://i.pravatar.cc/150?u=ritik",
+    skills: [], // To be populated if needed, or fetched separately
+    xp: Number(xp) || 12000,
     weeklyProgress: weeklyProgress,
-  }), [userProfile, weeklyProgress, activity]);
+  }), [name, role, avatar, xp, weeklyProgress]);
 
   if (isLoading && !roadmap) {
     return (

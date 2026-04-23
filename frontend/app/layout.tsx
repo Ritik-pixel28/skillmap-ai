@@ -10,6 +10,8 @@ export const metadata: Metadata = {
   description: "Get personalized, AI-generated learning roadmaps tailored to your goals. Master skills through project-based assignments and track progress.",
 };
 
+import { SettingsInitializer } from "@/components/settings/SettingsInitializer";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -18,6 +20,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <body className={`${inter.className} bg-white antialiased`}>
+        <SettingsInitializer />
         <BackButton />
         {children}
       </body>
