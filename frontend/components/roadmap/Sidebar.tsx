@@ -25,7 +25,7 @@ export const Sidebar = () => {
     { icon: BarChart2, label: "Stats", path: "/stats" },
     { icon: Layers, label: "Library", path: "/library" },
     { icon: MessageSquare, label: "Community", path: "#" },
-    { icon: User, label: "Profile", path: "/settings#profile", isAvatar: true },
+    { icon: User, label: "Profile", path: "/profile", isAvatar: true },
     { icon: Settings, label: "Settings", path: "/settings" },
   ];
 
