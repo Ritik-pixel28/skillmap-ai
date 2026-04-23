@@ -132,3 +132,103 @@ export interface LoginResponse {
 export interface RegisterResponse {
   readonly user_id: number;
 }
+
+// --- Settings Types ---
+
+export interface ProfileSettings {
+  name: string;
+  username: string;
+  bio: string;
+  avatar: string;
+  currentRole: string;
+  location: string;
+  website: string;
+  timezone: string;
+}
+
+export interface GoalSettings {
+  weeklyXpTarget: number;
+  dailyStudyTime: string;
+  learningStyle: 'Visual' | 'Practical' | 'Theoretical';
+  difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
+  focusAreas: string[];
+  streakGoal: number;
+  remindStreak: boolean;
+}
+
+export interface NotificationSettings {
+  enableAll: boolean;
+  dailyReminder: boolean;
+  dailyReminderTime: string;
+  weeklySummary: boolean;
+  weeklySummaryDay: string;
+  streakWarnings: boolean;
+  deadlineAlerts: boolean;
+  xpMilestones: boolean;
+  aiSuggestions: boolean;
+  systemUpdates: boolean;
+  channels: {
+    inApp: boolean;
+    email: boolean;
+    browserPush: boolean;
+  };
+}
+
+export interface AppearanceSettings {
+  theme: 'Light' | 'Dark' | 'System';
+  accentColor: string;
+  fontSize: 'Small' | 'Medium' | 'Large' | 'Extra Large';
+  compactMode: boolean;
+  sidebarStyle: 'icon' | 'full';
+}
+
+export interface SecuritySettings {
+  email: string;
+  twoFactorEnabled: boolean;
+  sessions: {
+    device: string;
+    browser: string;
+    location: string;
+    lastActive: string;
+    id: string;
+  }[];
+}
+
+export interface AISettings {
+  roadmapStyle: 'Aggressive' | 'Balanced' | 'Relaxed';
+  complexity: number;
+  regenerateFrequency: string;
+  explanationDepth: 'Brief' | 'Detailed';
+  customInstructions: string;
+}
+
+export interface PrivacySettings {
+  publicProfile: boolean;
+  includeLeaderboards: boolean;
+  shareAnonymousData: boolean;
+  cookies: {
+    essential: boolean;
+    analytics: boolean;
+    personalization: boolean;
+  };
+}
+
+export interface Integration {
+  id: string;
+  name: string;
+  description: string;
+  connected: boolean;
+  logo: string;
+  comingSoon?: boolean;
+}
+
+export interface UserSettings {
+  profile: ProfileSettings;
+  goals: GoalSettings;
+  notifications: NotificationSettings;
+  appearance: AppearanceSettings;
+  security: SecuritySettings;
+  ai: AISettings;
+  privacy: PrivacySettings;
+  integrations: Integration[];
+}
