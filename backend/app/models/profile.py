@@ -15,4 +15,4 @@ class Profile(Base):
     timeline = Column(Integer, nullable=False)
     skills = Column(JSON, nullable=True)
 
-    user = relationship("User", backref="profile", uselist=False)
+    user = relationship("User", back_populates="profile")

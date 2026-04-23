@@ -14,7 +14,7 @@ class Roadmap(Base):
 
     # Relationships
     weeks = relationship("RoadmapWeek", back_populates="roadmap", cascade="all, delete-orphan")
-    user = relationship("User", backref="roadmap", uselist=False)
+    user = relationship("User", back_populates="roadmaps")
 
 class RoadmapWeek(Base):
     """SQLAlchemy model for a specific week in a roadmap."""

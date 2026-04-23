@@ -14,4 +14,4 @@ class Activity(Base):
     xp = Column(Integer, default=20)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
 
-    user = relationship("User", backref="activities")
+    user = relationship("User", back_populates="activities")
