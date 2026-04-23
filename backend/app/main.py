@@ -14,7 +14,8 @@ from app.api import (
     progress_routes,
     user_routes,
     resource_routes,
-    stats_routes
+    stats_routes,
+    settings_routes
 )
 from app.database import engine, Base
 from app.core.logger import logger
@@ -26,6 +27,7 @@ from app.models.assignment import Assignment
 from app.models.roadmap import Roadmap, RoadmapWeek
 from app.models.activity import Activity
 from app.models.library import Resource, SavedResource, RoadmapResource
+from app.models.user_settings import UserSettings
 
 Base.metadata.create_all(bind=engine)
 
@@ -61,6 +63,7 @@ app.include_router(progress_routes.router)
 app.include_router(user_routes.router)
 app.include_router(resource_routes.router)
 app.include_router(stats_routes.router)
+app.include_router(settings_routes.router)
 
 @app.get("/")
 def read_root():
