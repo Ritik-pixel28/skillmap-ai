@@ -1,343 +1,113 @@
-#SkillMap AI
-### Personalized AI Career Roadmap & Assignment Platform
+# ✨ SkillMap AI
 
-SkillMap AI is an AI-powered career planning platform that generates structured, personalized learning roadmaps based on user goals, skill levels, and time availability.
+### *Empowering Careers through AI-Driven Personalized Roadmaps*
 
-It helps users:
-
-- Evaluate career feasibility
-- Generate AI-driven learning roadmaps
-- Complete structured weekly assignments
-- Track progress and learning streaks
-- Receive milestone and reminder notifications
+SkillMap AI is a premium, full-stack orchestration platform designed to transform career aspirations into actionable reality. By combining high-fidelity UI/UX with state-of-the-art AI generation, SkillMap provides learners with structured, weekly-focused learning paths, gamified progress tracking, and professional community engagement.
 
 ---
 
-## Problem Statement
+## 🚀 Key Features
 
-Many learners struggle with:
-- Unstructured learning paths
-- Unrealistic career timelines
-- Lack of progress tracking
-- No accountability system
+### 🧠 AI Roadmap Engine
+- **Weekly Precision**: Generates intensive 1-3 month plans broken down into weekly execution modules.
+- **Dynamic Adaptation**: Refine and regenerate roadmaps based on changing time commitments or skill levels.
+- **Structured Tasks**: Each week contains specific, actionable assignments to ensure consistent progress.
 
-SkillMap AI solves this by combining:
-- Feasibility logic
-- AI roadmap generation
-- Assignment tracking
-- Gamified progress system
+### 📊 Professional Dashboard & Stats
+- **Velocity Tracking**: Real-time visualization of learning speed and milestone completion.
+- **Skill Radar**: Interactive charts mapping your expertise across the target career domain.
+- **Global Ranking**: Compete with a community of learners and climb the XP leaderboard.
 
----
+### 👤 High-Fidelity Workspace
+- **Public Profile**: Showcase your bio, rank, role, and historical achievements in a sleek, professional layout.
+- **Settings Ecosystem**: Granular control over platform appearance (Dark/Light), AI preferences, and notification channels.
 
-## Core Features
-
-### Authentication
-- User registration and login (JWT-based)
-- Secure password hashing
-- Role-based access (User/Admin)
-
-### Profile Management
-- Education level
-- Skill level
-- Career goal
-- Weekly study hours
-
-### Feasibility Engine
-- Calculates required vs available learning hours
-- Returns:
-  - Feasible
-  - Risky
-  - Not Feasible
-
-### AI Roadmap Generation
-- AI-generated structured weekly roadmap
-- Stored in database
-- Regeneration support
-
-### Assignment System
-- Weekly tasks
-- GitHub/demo submission support
-- Completion tracking
-
-### Progress & Dashboard
-- Completion percentage
-- Learning streak
-- Milestone tracking
-- Dashboard analytics
-
-### Notifications
-- Email reminders
-- Weekly summaries
-- In-app notifications
-
-### Admin Dashboard
-- Total users
-- Active users
-- Completion analytics
-- Feasibility distribution
+### 📚 Resource Library & Community
+- **Curated Content**: Access a hand-picked selection of articles, videos, and courses tailored to your specific goals.
+- **Community Feed**: Share milestones, ask questions, and engage with other tech-forward learners.
 
 ---
 
-## Tech Stack
+## 🛠 Tech Stack
 
-### Frontend
-- Next.js (TypeScript)
-- Tailwind CSS
-
-### Backend
-- FastAPI
-- SQLAlchemy ORM
-- Pydantic  validation
-- JWT Authentication
-
-### Database
-- PostgreSQL
-
-### AI Integration
-- OpenAI API (Structured JSON Roadmap Generation)
-
-### Background Services
-- APScheduler
-- SMTP Email Service
-
-### Deployment
-- Docker & Docker Compose
+| Layer | Technologies |
+| :--- | :--- |
+| **Frontend** | Next.js 14, TypeScript, Tailwind CSS, Framer Motion |
+| **State Management** | Zustand (Persistent & Atomic) |
+| **Backend** | FastAPI (Python 3.12+), Pydantic v2 |
+| **Database** | SQLite (Dev) / PostgreSQL (Prod), SQLAlchemy 2.0 |
+| **AI Layer** | OpenAI GPT-4 API Integration |
+| **Security** | JWT (Stateless), Bcrypt Hashing |
 
 ---
 
-## Project Structure
+## 🏗 System Architecture
 
-### Root Folder
+The project follows a **Modular Service-Oriented Architecture** with strict separation of concerns.
+
+> [!TIP]
+> For a deep dive into the system design, check out our **[Premium Architecture Specification](ARCHITECTURE.md)**.
+
+### Directory Structure
+```text
 skillmap-ai/
-│
 ├── backend/
+│   ├── app/
+│   │   ├── api/          # FastAPI Routes (Auth, Profile, Roadmap, Community)
+│   │   ├── models/       # SQLAlchemy Centralized Models
+│   │   ├── schemas/      # Pydantic Validation Schemas
+│   │   └── services/     # Core Business Logic & AI Orchestration
 ├── frontend/
-├── docker-compose.yml
-├── .env
-├── .gitignore
-├── README.md
-
-### Backend Structure
-backend/
-│
-├── app/
-│   │
-│   ├── main.py                # FastAPI entry point
-│   ├── config.py              # Environment & settings management
-│   ├── database.py            # DB connection + session
-│   ├── dependencies.py        # Shared dependencies (auth, db session)
-│
-│   ├── core/                  # Core utilities
-│   │   ├── security.py        # JWT + password hashing
-│   │   ├── constants.py
-│   │   ├── exceptions.py
-│   │
-│   ├── models/                # SQLAlchemy Models (DB Tables)
-│   │   ├── user.py
-│   │   ├── profile.py
-│   │   ├── feasibility.py
-│   │   ├── roadmap.py
-│   │   ├── roadmap_week.py
-│   │   ├── assignment.py
-│   │   ├── submission.py
-│   │   ├── progress.py
-│   │   ├── notification.py
-│   │   ├── milestone.py
-│   │
-│   ├── schemas/               # Pydantic Request/Response Schemas
-│   │   ├── auth_schema.py
-│   │   ├── profile_schema.py
-│   │   ├── feasibility_schema.py
-│   │   ├── roadmap_schema.py
-│   │   ├── assignment_schema.py
-│   │   ├── progress_schema.py
-│   │   ├── notification_schema.py
-│   │
-│   ├── api/                   # Route Grouping
-│   │   ├── auth_routes.py
-│   │   ├── profile_routes.py
-│   │   ├── feasibility_routes.py
-│   │   ├── roadmap_routes.py
-│   │   ├── assignment_routes.py
-│   │   ├── progress_routes.py
-│   │   ├── notification_routes.py
-│   │   ├── admin_routes.py
-│   │
-│   ├── services/              # Business Logic Layer
-│   │   ├── auth_service.py
-│   │   ├── profile_service.py
-│   │   ├── feasibility_service.py
-│   │   ├── roadmap_service.py
-│   │   ├── ai_service.py
-│   │   ├── assignment_service.py
-│   │   ├── progress_service.py
-│   │   ├── notification_service.py
-│   │   ├── email_service.py
-│   │
-│   ├── scheduler/             # Background Jobs
-│   │   ├── reminder_jobs.py
-│   │   ├── weekly_summary.py
-│   │
-│   ├── utils/
-│   │   ├── helpers.py
-│   │
-│   ├── tests/
-│   │   ├── test_auth.py
-│   │   ├── test_feasibility.py
-│   │   ├── test_roadmap.py
-│
-├── requirements.txt
-├── Dockerfile
-├── .env
-
-
-### Frontend Structure
-frontend/
-│
-├── app/
-│   ├── layout.tsx
-│   ├── page.tsx
-│   │
-│   ├── auth/
-│   │   ├── login/page.tsx
-│   │   ├── register/page.tsx
-│   │
-│   ├── dashboard/
-│   │   ├── page.tsx
-│   │
-│   ├── roadmap/
-│   │   ├── page.tsx
-│   │   ├── [roadmapId]/page.tsx
-│   │
-│   ├── assignments/
-│   │   ├── page.tsx
-│   │   ├── [assignmentId]/page.tsx
-│   │
-│   ├── profile/
-│   │   ├── page.tsx
-│
-├── components/
-│   ├── ui/
-│   ├── dashboard/
-│   ├── roadmap/
-│   ├── assignments/
-│   ├── charts/
-│
-├── lib/
-│   ├── api.ts
-│   ├── auth.ts
-│   ├── utils.ts
-│
-├── hooks/
-│   ├── useAuth.ts
-│   ├── useRoadmap.ts
-│
-├── types/
-│   ├── user.ts
-│   ├── roadmap.ts
-│   ├── assignment.ts
-│
-├── context/
-│   ├── AuthContext.tsx
-│
-├── services/
-│   ├── authService.ts
-│   ├── roadmapService.ts
-│   ├── assignmentService.ts
-│
-├── Dockerfile
-├── .env.local
-
-
+│   ├── app/             # Next.js App Router (Dashboard, Settings, Profile)
+│   ├── components/      # Atomic UI Components & Layouts
+│   ├── lib/store/       # Zustand State Management Engine
+│   └── services/        # Frontend API Clients
+└── docs/                # Architecture & Design Assets
+```
 
 ---
 
-## Setup Instructions
+## ⚙️ Getting Started
 
-### 1.Clone Repository
-git clone https://github.com/ritik/skillmap-ai.git
-cd skillmap-ai
+### 1. Prerequisites
+- Node.js 18+
+- Python 3.12+
+- OpenAI API Key (for roadmap generation)
 
----
-
-### 2.Backend Setup 
+### 2. Backend Setup
+```bash
 cd backend
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
-uvicorn app.main:app –reload
+uvicorn app.main:app --reload
+```
 
----
-
-### 3.Frontend Setup
+### 3. Frontend Setup
+```bash
 cd frontend
 npm install
 npm run dev
+```
+*Note: The frontend will automatically pick port 3001 if 3000 is occupied.*
 
 ---
 
-### 🚀 Permanent Fix: Running Both Services
-If you see **"Failed to fetch"** on the login page, it means the backend is not running. 
+## 🔒 Security & Data Integrity
 
-To start **both** services at once easily:
-1. Ensure you are in the project root directory.
-2. Run the start-all script:
-   ```bash
-   chmod +x start-all.sh
-   ./start-all.sh
-   ```
-This will start the FastAPI backend in the background and the Next.js frontend in the foreground.
-
-### 4.Environment Variables
-
-#### Backend (.env)
-DATABASE_URL=postgresql://username:password@localhost:5432/skillmap
-SECRET_KEY=your_secret_key
-
-#### Frontend (.env.local)
-NEXT_PUBLIC_API_URL=http://localhost:8000
+- **Stateless Auth**: JWT tokens signed with SHA-256, stored securely for session persistence.
+- **Mapper Stability**: Centralized model registration in `app/models/__init__.py` to prevent SQLALchemy circular dependencies.
+- **Input Validation**: Zero-trust approach using Pydantic models for every API endpoint.
 
 ---
 
+## 👥 Authors
 
-## Security Practices
-
-- JWT-based stateless authentication
-- Password hashing using bcrypt
-- Input validation with Pydantic
-- Role-based route protection
-- Environment-based secret management
+**Ritik Arya & Prakhar Joshi**
+*Polaris School of Technology*
 
 ---
 
-## Architecture Principles
+## 📄 License
 
-- Modular architecture
-- Separation of concerns
-- Stateless backend
-- AI orchestration layer
-- Production-ready RESTful API structure
-- Docker-based containerization
-
----
-
-## Current Status
-
-✅ Git repository initialized  
-✅ Basic project scaffolding completed  
-✅ Backend health endpoint implemented  
-🚧 Feature development in progress  
-
----
-
-## Author
-
-**Ritik Arya and  Prakhar Joshi**  
-Computer Science Students  
-Polaris School of Technology  
-
----
-
-## License
-
-This project is for academic and learning purposes.
+This project is developed for academic purposes and high-fidelity prototype demonstration.
