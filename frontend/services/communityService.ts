@@ -52,17 +52,17 @@ export interface CommunityStats {
 }
 
 export const getCommunityStats = async (): Promise<CommunityStats> => {
-  const res = await apiRequest('/community/stats');
+  const res: any = await apiRequest('/community/stats');
   return res.data ?? { total_posts: 0, total_members: 0 };
 };
 
 export const getFeed = async (): Promise<CommunityPost[]> => {
-  const res = await apiRequest('/community/feed');
+  const res: any = await apiRequest('/community/feed');
   return res.data ?? [];
 };
 
 export const createPost = async (type: string, content: string): Promise<CommunityPost | null> => {
-  const res = await apiRequest('/community/posts', {
+  const res: any = await apiRequest('/community/posts', {
     method: 'POST',
     body: JSON.stringify({ type, content }),
   });
@@ -70,21 +70,21 @@ export const createPost = async (type: string, content: string): Promise<Communi
 };
 
 export const deletePost = async (postId: number): Promise<boolean> => {
-  const res = await apiRequest(`/community/posts/${postId}`, {
+  const res: any = await apiRequest(`/community/posts/${postId}`, {
     method: 'DELETE',
   });
   return res.success;
 };
 
 export const toggleLike = async (postId: number): Promise<{ liked: boolean; likes_count: number } | null> => {
-  const res = await apiRequest(`/community/posts/${postId}/like`, {
+  const res: any = await apiRequest(`/community/posts/${postId}/like`, {
     method: 'POST',
   });
   return res.success ? res.data : null;
 };
 
 export const addComment = async (postId: number, content: string): Promise<PostComment | null> => {
-  const res = await apiRequest(`/community/posts/${postId}/comments`, {
+  const res: any = await apiRequest(`/community/posts/${postId}/comments`, {
     method: 'POST',
     body: JSON.stringify({ content }),
   });
@@ -92,12 +92,12 @@ export const addComment = async (postId: number, content: string): Promise<PostC
 };
 
 export const getLeaderboard = async (): Promise<LeaderboardEntry[]> => {
-  const res = await apiRequest('/community/leaderboard');
+  const res: any = await apiRequest('/community/leaderboard');
   return res.data ?? [];
 };
 
 export const getSharedRoadmaps = async (careerGoal?: string): Promise<SharedRoadmap[]> => {
   const qs = careerGoal ? `?career_goal=${encodeURIComponent(careerGoal)}` : '';
-  const res = await apiRequest(`/community/roadmaps${qs}`);
+  const res: any = await apiRequest(`/community/roadmaps${qs}`);
   return res.data ?? [];
 };
