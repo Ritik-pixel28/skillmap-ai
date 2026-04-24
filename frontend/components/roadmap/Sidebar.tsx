@@ -23,8 +23,8 @@ export const Sidebar = () => {
     { icon: BarChart2, label: "Stats", path: "/stats" },
     { icon: Layers, label: "Library", path: "/library" },
     { icon: MessageSquare, label: "Community", path: "/community" },
-    { icon: User, label: "Profile", path: "#" },
-    { icon: Settings, label: "Settings", path: "#" },
+    { icon: User, label: "Profile", path: "/profile" },
+    { icon: Settings, label: "Settings", path: "/settings" },
   ];
 
   return (

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Sidebar } from "@/components/roadmap/Sidebar";
 import { UserAvatar } from "@/components/shared/UserAvatar";
