@@ -15,7 +15,7 @@ from app.api import (
     user_routes,
     resource_routes,
     stats_routes,
-    settings_routes
+    community_routes
 )
 from app.database import engine, Base
 from app.core.logger import logger
@@ -31,13 +31,17 @@ from app.models import (
     Resource, 
     SavedResource, 
     RoadmapResource, 
-    UserSettings
+    UserSettings,
+    CommunityPost,
+    PostLike,
+    PostComment
 )
 
 Base.metadata.create_all(bind=engine)
 
 # Seed the library with resources if empty
 from app.services.library_service import seed_resources
+from app.services.community_service import seed_community_posts
 
 app = FastAPI(title="SkillMap AI API")
 
@@ -56,6 +60,7 @@ async def startup_event():
     db = SessionLocal()
     try:
         seed_resources(db)
+        seed_community_posts(db)
     finally:
         db.close()
 
@@ -68,7 +73,7 @@ app.include_router(progress_routes.router)
 app.include_router(user_routes.router)
 app.include_router(resource_routes.router)
 app.include_router(stats_routes.router)
-app.include_router(settings_routes.router)
+app.include_router(community_routes.router)
 
 @app.get("/")
 def read_root():

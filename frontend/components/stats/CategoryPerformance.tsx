@@ -13,7 +13,12 @@ import {
 } from "recharts";
 import { TrendingUp } from "lucide-react";
 
-import { CategoryPerf } from "@/lib/types";
+interface CategoryPerf {
+  category: string;
+  percentage: number;
+  completed: number;
+  total: number;
+}
 
 interface CategoryPerformanceProps {
   data: CategoryPerf[];
@@ -40,7 +45,7 @@ export const CategoryPerformance = ({ data }: CategoryPerformanceProps) => {
       </div>
 
       <div className="flex-1 w-full translate-x-[-20px]">
-        <ResponsiveContainer width="100%" height={300}>
+        <ResponsiveContainer width="100%" height="100%">
           <BarChart 
             data={data} 
             layout="vertical" 
@@ -67,10 +72,7 @@ export const CategoryPerformance = ({ data }: CategoryPerformanceProps) => {
               }}
               itemStyle={{ fontSize: '12px', fontWeight: 900, color: '#fff' }}
               labelStyle={{ display: 'none' }}
-              formatter={(value) => {
-                const numValue = typeof value === 'number' ? value : 0;
-                return [`${numValue}% Mastery`, 'Score'];
-              }}
+              formatter={(value: any) => [`${value}% Mastery`, 'Score']}
             />
             <Bar 
               dataKey="percentage" 

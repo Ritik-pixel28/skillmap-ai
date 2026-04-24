@@ -16,3 +16,6 @@ class User(Base):
     activities = relationship("Activity", back_populates="user")
     saved_resources = relationship("SavedResource", back_populates="user")
     assignments = relationship("Assignment", back_populates="user")
+    community_posts = relationship("CommunityPost", back_populates="author")
+    post_likes = relationship("PostLike", back_populates="user")
+    post_comments = relationship("PostComment", back_populates="user")

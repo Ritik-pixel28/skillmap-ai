@@ -5,6 +5,7 @@ from app.models.roadmap import Roadmap, RoadmapWeek
 from app.models.activity import Activity
 from app.models.library import Resource, SavedResource, RoadmapResource
 from app.models.user_settings import UserSettings
+from app.models.community import CommunityPost, PostLike, PostComment
 
 __all__ = [
     "User",
@@ -17,4 +18,7 @@ __all__ = [
     "SavedResource",
     "RoadmapResource",
     "UserSettings",
+    "CommunityPost",
+    "PostLike",
+    "PostComment",
 ]
