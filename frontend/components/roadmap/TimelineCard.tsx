@@ -25,7 +25,7 @@ export const TimelineCard = ({ task, index, isLeft, onToggle, showWeekBadge, isA
 
   return (
     <div
-      className={`flex items-center w-full mb-12 opacity-0 ${isLeft ? "flex-row-reverse animate-slide-in-right" : "flex-row animate-slide-in-left"}`}
+      className={`flex items-center w-full mb-12 ${isLeft ? "flex-row-reverse animate-slide-in-right" : "flex-row animate-slide-in-left"}`}
     >
       <div className="w-1/2" />
       

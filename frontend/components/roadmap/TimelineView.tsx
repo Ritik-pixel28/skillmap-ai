@@ -194,16 +194,7 @@ export const TimelineView = ({
                 ))}
               </div>
             ) : filteredTasks.length > 0 ? (
-              <div className={`
-                ${selectedWeek 
-                  ? "flex flex-col relative" 
-                  : "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10 px-4" 
-                }`}
-              >
-                {selectedWeek && (
-                  <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-blue-200 via-slate-200 to-transparent -translate-x-1/2 hidden md:block" />
-                )}
-
+              <div className="flex flex-col gap-16 px-4">
                 {selectedWeek ? (
                   filteredTasks.map((task: any, index: number) => (
                     <TimelineCard 
@@ -219,9 +210,9 @@ export const TimelineView = ({
                   ))
                 ) : (
                   roadmapData?.weeks?.map((week: any) => (
-                    <div key={week.week} className="flex flex-col gap-6 col-span-full mb-12 last:mb-0">
-                      <div className="flex items-center gap-4 px-2">
-                        <div className="w-12 h-12 rounded-2xl bg-slate-900 flex items-center justify-center text-white font-black text-sm">
+                    <div key={week.id || week.week} className="flex flex-col gap-8">
+                      <div className="flex items-center gap-4 py-4 border-b border-slate-50">
+                        <div className="w-12 h-12 rounded-2xl bg-slate-900 flex items-center justify-center text-white font-black text-sm shadow-lg shadow-slate-900/20">
                           W{week.week}
                         </div>
                         <div className="flex flex-col">
@@ -229,14 +220,13 @@ export const TimelineView = ({
                             {week.title}
                           </h3>
                           <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
-                             {week.tasks.length} Action Items
+                             {week.tasks?.length || 0} Action Items
                           </span>
                         </div>
-                        <div className="flex-1 h-px bg-slate-100 ml-4" />
                       </div>
                       
-                      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10">
-                        {week.tasks.map((task: any, tIdx: number) => {
+                      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                        {week.tasks?.map((task: any, tIdx: number) => {
                           const uniqueId = `${week.week}-${task.id || tIdx}`;
                           const normalizedTask = {
                             ...task,
