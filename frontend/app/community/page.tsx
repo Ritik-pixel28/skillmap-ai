@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { PageTransition } from "@/components/shared/PageTransition";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { getAuthToken } from "@/lib/api";
@@ -316,16 +317,12 @@ export default function CommunityPage() {
         </div>
 
         {/* ── Content ── */}
-        <div className="flex-1 overflow-y-auto px-8 pb-8">
-          <AnimatePresence mode="wait">
+        <PageTransition className="flex-1 overflow-y-auto px-8 pb-8">
             {/* FEED TAB */}
             {activeTab === "feed" && (
-              <motion.div
+              <div
                 key="feed"
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                className="flex flex-col gap-4 mt-2"
+                className="flex flex-col gap-4 mt-2 animate-[fadeIn_0.3s_ease-out]"
               >
                 {loading ? (
                   Array.from({ length: 3 }).map((_, i) => <SkeletonPost key={i} />)
@@ -358,17 +355,14 @@ export default function CommunityPage() {
                     />
                   ))
                 )}
-              </motion.div>
+              </div>
             )}
 
             {/* LEADERBOARD TAB */}
             {activeTab === "leaderboard" && (
-              <motion.div
+              <div
                 key="leaderboard"
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                className="mt-2"
+                className="mt-2 animate-[fadeIn_0.3s_ease-out]"
               >
                 {loading ? (
                   <div className="flex flex-col gap-3">
@@ -379,17 +373,14 @@ export default function CommunityPage() {
                 ) : (
                   <LeaderboardTable entries={leaderboard} />
                 )}
-              </motion.div>
+              </div>
             )}
 
             {/* SHARED ROADMAPS TAB */}
             {activeTab === "roadmaps" && (
-              <motion.div
+              <div
                 key="roadmaps"
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 mt-2"
+                className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 mt-2 animate-[fadeIn_0.3s_ease-out]"
               >
                 {loading ? (
                   Array.from({ length: 3 }).map((_, i) => (
@@ -412,10 +403,9 @@ export default function CommunityPage() {
                     <RoadmapCard key={rm.user_id} roadmap={rm} index={i} />
                   ))
                 )}
-              </motion.div>
+              </div>
             )}
-          </AnimatePresence>
-        </div>
+        </PageTransition>
       </div>
 
       {/* ── Compose Modal ── */}

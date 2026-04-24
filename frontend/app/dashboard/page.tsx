@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { PageTransition } from "@/components/shared/PageTransition";
 import { Sidebar } from "@/components/roadmap/Sidebar";
 import { ProfilePanel } from "@/components/dashboard/ProfilePanel";
 import { MainPanel } from "@/components/dashboard/MainPanel";
@@ -119,11 +119,7 @@ export default function DashboardPage() {
         <div className="fixed bottom-[-10%] left-[20%] w-[500px] h-[500px] bg-indigo-400/5 blur-[150px] rounded-full pointer-events-none z-0" />
 
         <div className="relative z-10 w-full max-w-[1600px] mx-auto p-6 md:p-10">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="grid grid-cols-1 lg:grid-cols-12 gap-10"
-          >
+          <PageTransition className="grid grid-cols-1 lg:grid-cols-12 gap-10">
             <div className="lg:col-span-3">
               <ProfilePanel user={userData} />
             </div>
@@ -139,7 +135,7 @@ export default function DashboardPage() {
                 onToggleTask={(task) => updateTaskStatus(task.week, task.title, task.status !== "Done")}
               />
             </div>
-          </motion.div>
+          </PageTransition>
         </div>
       </div>
     </div>

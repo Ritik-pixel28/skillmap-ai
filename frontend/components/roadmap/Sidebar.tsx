@@ -1,7 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { useRouter, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
 import { 
   BarChart2, 
   Calendar, 
@@ -14,7 +14,6 @@ import {
 } from "lucide-react";
 
 export const Sidebar = () => {
-  const router = useRouter();
   const pathname = usePathname();
 
   const menuItems = [
@@ -39,31 +38,29 @@ export const Sidebar = () => {
         {menuItems.map((item, index) => {
           const isActive = pathname === item.path;
           return (
-            <motion.button
+            <Link
               key={index}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => item.path !== "#" && router.push(item.path)}
+              href={item.path}
+              prefetch={true}
               title={item.label}
-              className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all cursor-pointer
+              className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-200 cursor-pointer
                 ${isActive 
-                  ? "bg-white text-blue-600 shadow-xl shadow-slate-200/50" 
-                  : "text-slate-400 hover:bg-white/50 hover:text-slate-600"
+                  ? "bg-white text-blue-600 shadow-xl shadow-slate-200/50 scale-110" 
+                  : "text-slate-400 hover:bg-white/50 hover:text-slate-600 hover:scale-105 active:scale-95"
                 }`}
             >
               <item.icon className="w-6 h-6" />
-            </motion.button>
+            </Link>
           );
         })}
       </div>
 
       <div className="flex flex-col gap-4 mb-4">
-        <motion.button
-          whileHover={{ rotate: 90 }}
-          className="w-10 h-10 rounded-full bg-slate-900 text-white flex items-center justify-center shadow-lg"
+        <button
+          className="w-10 h-10 rounded-full bg-slate-900 text-white flex items-center justify-center shadow-lg hover:rotate-90 transition-transform duration-300"
         >
           <Plus className="w-5 h-5" />
-        </motion.button>
+        </button>
       </div>
     </div>
   );

@@ -15,7 +15,8 @@ from app.api import (
     user_routes,
     resource_routes,
     stats_routes,
-    community_routes
+    community_routes,
+    settings_routes
 )
 from app.database import engine, Base
 from app.core.logger import logger
@@ -74,6 +75,7 @@ app.include_router(user_routes.router)
 app.include_router(resource_routes.router)
 app.include_router(stats_routes.router)
 app.include_router(community_routes.router)
+app.include_router(settings_routes.router)
 
 @app.get("/")
 def read_root():

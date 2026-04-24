@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
+import { PageTransition } from "@/components/shared/PageTransition";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sidebar } from "@/components/roadmap/Sidebar";
 import { XPOverviewCard } from "@/components/stats/XPOverviewCard";
@@ -84,21 +85,13 @@ export default function StatsPage() {
           {/* Header with Filter System */}
           <header className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div>
-              <motion.div 
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex items-center gap-2 mb-3"
-              >
+              <div className="flex items-center gap-2 mb-3">
                 <div className="px-2.5 py-1 bg-blue-600 text-white text-[10px] font-black uppercase tracking-widest rounded-lg shadow-lg shadow-blue-200">Live</div>
                 <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Real-time performance engine</span>
-              </motion.div>
-              <motion.h1 
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                className="text-4xl font-black text-slate-900 tracking-tight"
-              >
+              </div>
+              <h1 className="text-4xl font-black text-slate-900 tracking-tight animate-[fadeIn_0.3s_ease-out]">
                 Analytics <span className="text-blue-600">Hub</span>
-              </motion.h1>
+              </h1>
             </div>
 
             <div className="relative flex items-center gap-4">
@@ -140,8 +133,7 @@ export default function StatsPage() {
             </div>
           </header>
 
-          {/* Main Grid Orchestration */}
-          <div className="flex flex-col gap-10">
+          <PageTransition className="flex flex-col gap-10">
             {/* Top Row: Aggregates */}
             <XPOverviewCard 
               totalXp={overview?.totalXp} 
@@ -196,7 +188,7 @@ export default function StatsPage() {
                 <CategoryPerformance data={categories} />
               </div>
             </div>
-          </div>
+          </PageTransition>
         </div>
       </div>
     </div>

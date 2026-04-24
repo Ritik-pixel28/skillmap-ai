@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo } from "react";
+import { PageTransition } from "@/components/shared/PageTransition";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { getAuthToken } from "@/lib/api";
@@ -369,16 +370,14 @@ export default function LibraryPage() {
         </div>
 
         {/* ── Content Grid ── */}
-        <div className="flex-1 overflow-y-auto px-8 pb-8">
+        <PageTransition className="flex-1 overflow-y-auto px-8 pb-8">
           {loading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 mt-2">
               {Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)}
             </div>
           ) : currentList.length === 0 ? (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="flex flex-col items-center justify-center py-24 text-center"
+            <div
+              className="flex flex-col items-center justify-center py-24 text-center animate-[fadeIn_0.3s_ease-out]"
             >
               {activeTab === "saved" ? (
                 <>
@@ -397,16 +396,12 @@ export default function LibraryPage() {
                   <p className="text-slate-400 text-sm max-w-xs">Try adjusting your search or filters to find what you're looking for.</p>
                 </>
               )}
-            </motion.div>
+            </div>
           ) : (
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeTab}
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 mt-2"
-              >
+            <div
+              key={activeTab}
+              className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 mt-2 animate-[fadeIn_0.3s_ease-out]"
+            >
                 {currentList.map((resource) => (
                   <ResourceCard
                     key={resource.id}
@@ -417,10 +412,9 @@ export default function LibraryPage() {
                     savingId={savingId}
                   />
                 ))}
-              </motion.div>
-            </AnimatePresence>
+            </div>
           )}
-        </div>
+        </PageTransition>
       </div>
 
       {/* ── Resource Detail Modal ── */}
