@@ -40,7 +40,7 @@ class SavedResource(Base):
 
     # Relationships
     resource = relationship("Resource", back_populates="saved_by")
-    user = relationship("User", backref="saved_resources")
+    user = relationship("User", back_populates="saved_resources")
 
 
 class RoadmapResource(Base):

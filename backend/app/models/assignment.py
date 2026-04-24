@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy.orm import relationship
 from app.database import Base
 
 class Assignment(Base):
@@ -11,3 +12,5 @@ class Assignment(Base):
     description = Column(String, nullable=True)
     week = Column(Integer, nullable=False)
     status = Column(String, default="pending", nullable=False) # "pending" or "completed"
+
+    user = relationship("User", back_populates="assignments")

@@ -14,3 +14,5 @@ class User(Base):
     profile = relationship("Profile", back_populates="user", uselist=False)
     roadmaps = relationship("Roadmap", back_populates="user")
     activities = relationship("Activity", back_populates="user")
+    saved_resources = relationship("SavedResource", back_populates="user")
+    assignments = relationship("Assignment", back_populates="user")

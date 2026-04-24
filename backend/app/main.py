@@ -21,13 +21,18 @@ from app.database import engine, Base
 from app.core.logger import logger
 
 # Import models for table creation
-from app.models.user import User
-from app.models.profile import Profile
-from app.models.assignment import Assignment
-from app.models.roadmap import Roadmap, RoadmapWeek
-from app.models.activity import Activity
-from app.models.library import Resource, SavedResource, RoadmapResource
-from app.models.user_settings import UserSettings
+from app.models import (
+    User, 
+    Profile, 
+    Assignment, 
+    Roadmap, 
+    RoadmapWeek, 
+    Activity, 
+    Resource, 
+    SavedResource, 
+    RoadmapResource, 
+    UserSettings
+)
 
 Base.metadata.create_all(bind=engine)
 
