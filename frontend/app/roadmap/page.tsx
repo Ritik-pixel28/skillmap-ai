@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { PageTransition } from "@/components/shared/PageTransition";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sidebar } from "@/components/roadmap/Sidebar";
 import { ProjectPanel } from "@/components/roadmap/ProjectPanel";
@@ -56,7 +57,7 @@ export default function Roadmap() {
     <div className="flex h-screen w-full bg-gradient-to-br from-blue-50 to-white overflow-hidden font-sans antialiased text-slate-900 selection:bg-blue-100 selection:text-blue-900">
       <Sidebar />
 
-      <div className="flex flex-1 relative min-w-0">
+      <PageTransition className="flex flex-1 relative min-w-0">
         <ProjectPanel 
           roadmapData={roadmapData} 
           loading={loading} 
@@ -108,7 +109,7 @@ export default function Roadmap() {
             </motion.div>
           )}
         </AnimatePresence>
-      </div>
+      </PageTransition>
     </div>
   );
 }

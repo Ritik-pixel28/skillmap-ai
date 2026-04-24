@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { PageTransition } from "@/components/shared/PageTransition";
 import { Sidebar } from "@/components/roadmap/Sidebar";
 import { UserAvatar } from "@/components/shared/UserAvatar";
 import { useProfileStore } from "@/lib/store/useProfileStore";
@@ -41,8 +41,8 @@ export default function ProfilePage() {
       <Sidebar />
       
       <main className="flex-1 overflow-y-auto custom-scrollbar">
-        <div className="max-w-[1200px] mx-auto px-8 py-12">
-          
+        <PageTransition className="max-w-[1200px] mx-auto px-8 py-12">
+          {/* Header */}
           <div className="flex items-center justify-between mb-12">
             <div>
               <nav className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2">
@@ -64,10 +64,8 @@ export default function ProfilePage() {
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-1 space-y-8">
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-white rounded-[2rem] p-8 shadow-sm border border-slate-50 flex flex-col items-center text-center relative overflow-hidden"
+              <div 
+                className="bg-white rounded-[2rem] p-8 shadow-sm border border-slate-50 flex flex-col items-center text-center relative overflow-hidden animate-[fadeIn_0.3s_ease-out]"
               >
                 <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-br from-blue-600 to-indigo-700" />
                 
@@ -105,13 +103,10 @@ export default function ProfilePage() {
                       <span className="text-xs font-bold">Joined April 2024</span>
                    </div>
                 </div>
-              </motion.div>
+              </div>
 
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
-                className="bg-[#1e2235] rounded-[2rem] p-8 shadow-xl text-white overflow-hidden relative"
+              <div 
+                className="bg-[#1e2235] rounded-[2rem] p-8 shadow-xl text-white overflow-hidden relative animate-[fadeIn_0.4s_ease-out]"
               >
                  <div className="absolute -right-12 -top-12 w-48 h-48 bg-blue-600/10 rounded-full blur-3xl" />
                  
@@ -138,14 +133,10 @@ export default function ProfilePage() {
                     </div>
 
                     <div className="w-full bg-white/5 h-2 rounded-full overflow-hidden">
-                       <motion.div 
-                         initial={{ width: 0 }}
-                         animate={{ width: "65%" }}
-                         className="h-full bg-blue-500 rounded-full shadow-[0_0_15px_rgba(59,130,246,0.5)]"
-                       />
+                       <div className="h-full bg-blue-500 rounded-full shadow-[0_0_15px_rgba(59,130,246,0.5)] transition-all duration-1000" style={{ width: "65%" }} />
                     </div>
                  </div>
-              </motion.div>
+              </div>
             </div>
 
             <div className="lg:col-span-2 space-y-8">
@@ -156,12 +147,9 @@ export default function ProfilePage() {
                     { label: 'Time Invested', value: '24.5h', icon: Clock, color: 'emerald', desc: '82% of weekly goal' },
                     { label: 'Certifications', value: '3', icon: Award, color: 'purple', desc: '1 pending verification' },
                   ].map((stat, i) => (
-                    <motion.div
+                    <div
                       key={stat.label}
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: 0.1 + (i * 0.05) }}
-                      className="bg-white p-8 rounded-[2rem] shadow-sm border border-slate-50 group hover:border-blue-100 transition-all hover:shadow-md"
+                      className="bg-white p-8 rounded-[2rem] shadow-sm border border-slate-50 group hover:border-blue-100 transition-all hover:shadow-md animate-[fadeIn_0.3s_ease-out]"
                     >
                        <div className="flex items-start justify-between mb-8">
                           <div className={`p-4 rounded-2xl shadow-sm transition-colors ${
@@ -178,16 +166,11 @@ export default function ProfilePage() {
                           <p className="text-3xl font-black text-slate-900 tracking-tight mb-2">{stat.value}</p>
                           <p className="text-[10px] font-bold text-slate-400">{stat.desc}</p>
                        </div>
-                    </motion.div>
+                    </div>
                   ))}
                </div>
 
-               <motion.div
-                 initial={{ opacity: 0, y: 20 }}
-                 animate={{ opacity: 1, y: 0 }}
-                 transition={{ delay: 0.3 }}
-                 className="bg-white rounded-[2rem] p-10 shadow-sm border border-slate-50"
-               >
+               <div className="bg-white rounded-[2rem] p-10 shadow-sm border border-slate-50 animate-[fadeIn_0.4s_ease-out]">
                   <div className="flex items-center justify-between mb-10">
                      <div>
                         <h3 className="text-xl font-black text-slate-900 tracking-tight">Active Roadmap</h3>
@@ -216,21 +199,15 @@ export default function ProfilePage() {
                               </span>
                            </div>
                            <div className="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
-                              <motion.div 
-                                initial={{ width: 0 }}
-                                animate={{ width: `${course.progress}%` }}
-                                className={`h-full rounded-full ${
-                                   course.status === 'Completed' ? "bg-emerald-500" : "bg-blue-600"
-                                }`}
-                              />
+                               <div className={`h-full rounded-full transition-all duration-700 ${course.status === "Completed" ? "bg-emerald-500" : "bg-blue-600"}`} style={{ width: `${course.progress}%` }} />
                            </div>
                         </div>
                      ))}
                   </div>
-               </motion.div>
+               </div>
             </div>
           </div>
-        </div>
+        </PageTransition>
       </main>
     </div>
   );

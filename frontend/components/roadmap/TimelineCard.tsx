@@ -24,11 +24,8 @@ export const TimelineCard = ({ task, index, isLeft, onToggle, showWeekBadge, isA
   const isCompleted = task.completed;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, x: isLeft ? -50 : 50 }}
-      whileInView={{ opacity: 1, x: 0 }}
-      viewport={{ once: true }}
-      className={`flex items-center w-full mb-12 ${isLeft ? "flex-row-reverse" : "flex-row"}`}
+    <div
+      className={`flex items-center w-full mb-12 opacity-0 ${isLeft ? "flex-row-reverse animate-slide-in-right" : "flex-row animate-slide-in-left"}`}
     >
       <div className="w-1/2" />
       
@@ -39,12 +36,11 @@ export const TimelineCard = ({ task, index, isLeft, onToggle, showWeekBadge, isA
       </div>
 
       <div className={`w-1/2 ${isLeft ? "pr-12 text-right" : "pl-12 text-left"}`}>
-        <motion.div
-          layout
-          whileHover={{ y: -8, scale: 1.02 }}
+        <div
           onClick={onSelect}
           className={`group p-7 rounded-[32px] border-2 transition-all duration-300 cursor-pointer relative overflow-hidden flex flex-col justify-between
             min-w-[260px] sm:min-w-[280px] lg:min-w-[320px]
+            hover:-translate-y-2 hover:scale-[1.02]
             ${isActive 
               ? "bg-white border-blue-500 shadow-2xl shadow-blue-500/10 z-30" 
               : isCompleted 
@@ -130,8 +126,8 @@ export const TimelineCard = ({ task, index, isLeft, onToggle, showWeekBadge, isA
               {isCompleted ? "Completed" : "Mark as complete"}
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
-    </motion.div>
+    </div>
   );
 };

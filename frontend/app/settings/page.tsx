@@ -12,7 +12,6 @@ import { AIPreferencesSection } from "@/components/settings/sections/AIPreferenc
 import { DataPrivacySection } from "@/components/settings/sections/DataPrivacySection";
 import { IntegrationsSection } from "@/components/settings/sections/IntegrationsSection";
 import { useSettingsStore } from "@/lib/store/useSettingsStore";
-import { AnimatePresence, motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
 
 export default function SettingsPage() {
@@ -55,16 +54,14 @@ export default function SettingsPage() {
   if (isLoading) {
     return (
       <div className="h-screen w-full flex flex-col items-center justify-center bg-[#F8F9FB]">
-        <motion.div
-           initial={{ scale: 0.8, opacity: 0 }}
-           animate={{ scale: 1, opacity: 1 }}
-           className="flex flex-col items-center gap-6"
+        <div
+           className="flex flex-col items-center gap-6 animate-[fadeIn_0.3s_ease-out]"
         >
            <div className="w-16 h-16 bg-white rounded-3xl shadow-xl flex items-center justify-center border border-slate-50">
               <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
            </div>
            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Initializing Engine</p>
-        </motion.div>
+        </div>
       </div>
     );
   }
@@ -74,25 +71,21 @@ export default function SettingsPage() {
       <SettingsNav activeTab={activeTab} onTabChange={handleTabChange} />
       
       <div className="w-full">
-         <AnimatePresence mode="wait">
-            <motion.div
-              key={activeTab}
-              initial={{ x: 20, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: -20, opacity: 0 }}
-              transition={{ duration: 0.4, ease: "easeInOut" }}
-            >
-               {activeTab === 'profile' && <ProfileSection />}
-               {activeTab === 'goals' && <GoalsSection />}
-               {activeTab === 'notifications' && <NotificationsSection />}
-               {activeTab === 'appearance' && <AppearanceSection />}
-               {activeTab === 'security' && <SecuritySection />}
-               {activeTab === 'ai' && <AIPreferencesSection />}
-               {activeTab === 'privacy' && <DataPrivacySection />}
-               {activeTab === 'integrations' && <IntegrationsSection />}
-            </motion.div>
-         </AnimatePresence>
+         <div
+           key={activeTab}
+           className="animate-[fadeIn_0.2s_ease-out]"
+         >
+            {activeTab === 'profile' && <ProfileSection />}
+            {activeTab === 'goals' && <GoalsSection />}
+            {activeTab === 'notifications' && <NotificationsSection />}
+            {activeTab === 'appearance' && <AppearanceSection />}
+            {activeTab === 'security' && <SecuritySection />}
+            {activeTab === 'ai' && <AIPreferencesSection />}
+            {activeTab === 'privacy' && <DataPrivacySection />}
+            {activeTab === 'integrations' && <IntegrationsSection />}
+         </div>
       </div>
     </SettingsLayout>
   );
 }
+
