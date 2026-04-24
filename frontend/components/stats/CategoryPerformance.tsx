@@ -72,7 +72,7 @@ export const CategoryPerformance = ({ data }: CategoryPerformanceProps) => {
               }}
               itemStyle={{ fontSize: '12px', fontWeight: 900, color: '#fff' }}
               labelStyle={{ display: 'none' }}
-              formatter={(value: number) => [`${value}% Mastery`, 'Score']}
+              formatter={(value: any) => [`${value}% Mastery`, 'Score']}
             />
             <Bar 
               dataKey="percentage" 
