@@ -1,40 +1,63 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { CheckCircle2, TrendingUp, Brain, Star } from "lucide-react";
-
-import { User } from "@/lib/types";
+import { CheckCircle2, TrendingUp, Brain, Star, Loader2 } from "lucide-react";
+import { useProfileStore } from "@/lib/store/useProfileStore";
+import { useEffect } from "react";
 
 interface ProfilePanelProps {
-  user: User;
+  user: {
+    skills: string[];
+    weeklyProgress: number;
+    xp: number;
+  };
 }
 
 export const ProfilePanel = ({ user }: ProfilePanelProps) => {
+  const { name, avatar, role, rank, xp, fetchProfile, lastUpdated, isLoading } = useProfileStore();
+
+  useEffect(() => {
+    // Fetch on mount if stale (older than 5 minutes)
+    const isStale = !lastUpdated || Date.now() - lastUpdated > 5 * 60 * 1000;
+    if (isStale) fetchProfile();
+  }, [fetchProfile, lastUpdated]);
+
   return (
     <div className="w-full flex flex-col gap-8">
       {/* Profile Card */}
-      <div className="bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm">
+      <div className="bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm relative overflow-hidden">
+        {isLoading && !name && (
+          <div className="absolute inset-0 bg-white/50 backdrop-blur-[2px] z-20 flex items-center justify-center">
+             <Loader2 className="w-6 h-6 text-blue-600 animate-spin" />
+          </div>
+        )}
         <div className="flex flex-col items-center text-center">
           <div className="relative mb-4">
-            <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-blue-50 ring-4 ring-white shadow-xl">
-              <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
+            <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-blue-50 ring-4 ring-white shadow-xl bg-slate-100 flex items-center justify-center">
+              {avatar ? (
+                <img src={avatar} alt={name || "User"} className="w-full h-full object-cover" />
+              ) : (
+                <div className="text-3xl font-black text-blue-600">
+                  {name?.charAt(0).toUpperCase()}
+                </div>
+              )}
             </div>
             <div className="absolute -bottom-1 -right-1 bg-emerald-500 text-white p-1.5 rounded-full ring-4 ring-white shadow-lg">
               <CheckCircle2 className="w-4 h-4" />
             </div>
           </div>
-          <h2 className="text-xl font-black text-slate-900 leading-tight">{user.name}</h2>
-          <p className="text-slate-500 font-medium text-sm mt-1">{user.role}</p>
+          <h2 className="text-xl font-black text-slate-900 leading-tight">{name}</h2>
+          <p className="text-slate-500 font-medium text-sm mt-1">{role}</p>
         </div>
 
         <div className="mt-8 grid grid-cols-2 gap-3">
           <div className="bg-slate-50 p-3 rounded-2xl text-center">
             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Rank</p>
-            <p className="text-sm font-black text-slate-900">#42</p>
+            <p className="text-sm font-black text-slate-900">#{rank}</p>
           </div>
           <div className="bg-slate-50 p-3 rounded-2xl text-center">
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">XP</p>
-            <p className="text-sm font-black text-slate-900">{user.xp || "0"}</p>
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total XP</p>
+            <p className="text-sm font-black text-slate-900">{xp || user.xp || "0"}</p>
           </div>
         </div>
       </div>

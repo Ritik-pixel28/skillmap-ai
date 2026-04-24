@@ -13,6 +13,16 @@ import {
 } from "lucide-react";
 import { TimelineCard } from "./TimelineCard";
 
+import { Roadmap, Task } from "@/lib/types";
+
+interface TimelineTask extends Task {
+  week?: number;
+  weekTitle?: string;
+  subtopics?: string[];
+  actions?: string[];
+  uniqueId?: string;
+}
+
 export const TimelineView = ({ 
   roadmapData, 
   loading, 
@@ -23,14 +33,14 @@ export const TimelineView = ({
   selectedTask,
   setSelectedTask
 }: { 
-  roadmapData: any, 
-  loading: boolean, 
-  error: string | null,
-  onRetry: () => void,
-  selectedWeek: number | null,
-  onToggleTask: (weekNumber: number, taskId: any) => void,
-  selectedTask: any | null,
-  setSelectedTask: (task: any | null) => void
+  roadmapData: Roadmap | null;
+  loading: boolean;
+  error: string | null;
+  onRetry: () => void;
+  selectedWeek: number | null;
+  onToggleTask: (weekNumber: number, taskId: string | number) => void;
+  selectedTask: TimelineTask | null;
+  setSelectedTask: (task: TimelineTask | null) => void;
 }) => {
   const [isStarted, setIsStarted] = useState(false);
   

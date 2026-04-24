@@ -11,23 +11,28 @@ import {
   CareerStage, 
   Skill, 
   DashboardTask, 
-  DashboardActivity, 
   User 
 } from "@/lib/types";
+import { useProfileStore } from "@/lib/store/useProfileStore";
 import { Loader2, RefreshCcw } from "lucide-react";
 
 export default function DashboardPage() {
-  const { roadmap, skills, activity, userProfile, isLoading, error, fetchDashboardData, updateTaskStatus } = useDashboardStore();
+  const { roadmap, skills, activity, isLoading, error, fetchDashboardData, updateTaskStatus } = useDashboardStore();
+  const { name, role, avatar, xp, rank, fetchProfile: fetchProfileData, lastUpdated } = useProfileStore();
 
   useEffect(() => {
     fetchDashboardData();
-  }, [fetchDashboardData]);
+    // Only fetch if stale
+    if (!lastUpdated || Date.now() - lastUpdated > 5 * 60 * 1000) {
+      fetchProfileData();
+    }
+  }, [fetchDashboardData, fetchProfileData, lastUpdated]);
 
   // Transform roadmap data for MainPanel and RightPanel
   const careerPath = useMemo<ReadonlyArray<CareerStage>>(() => {
-    if (!roadmap) return [];
+    if (!roadmap) return [] as CareerStage[];
     const totalWeeks = roadmap.weeks.length;
-    if (totalWeeks === 0) return [];
+    if (totalWeeks === 0) return [] as CareerStage[];
     
     const phaseSize = Math.ceil(totalWeeks / 3);
     const currentWeekInfo = roadmap.weeks.find(w => w.tasks.some(t => !t.completed)) || roadmap.weeks[roadmap.weeks.length - 1];
@@ -37,24 +42,24 @@ export default function DashboardPage() {
       { label: "Beginner", status: currentWeekNum <= phaseSize ? "current" : "completed" },
       { label: "Intermediate", status: currentWeekNum > phaseSize && currentWeekNum <= phaseSize * 2 ? "current" : (currentWeekNum > phaseSize * 2 ? "completed" : "upcoming") },
       { label: "Advanced", status: currentWeekNum > phaseSize * 2 ? "current" : "upcoming" },
-    ];
+    ] as CareerStage[];
   }, [roadmap]);
 
   const skillMatrix = useMemo<ReadonlyArray<Skill>>(() => {
-    if (!skills) return [];
+    if (!skills) return [] as Skill[];
     return Object.keys(skills.current).map(key => ({
       subject: key.charAt(0).toUpperCase() + key.slice(1),
       A: skills.current[key],
       B: skills.target[key],
       fullMark: 100
-    }));
+    })) as Skill[];
   }, [skills]);
 
   const currentTasks = useMemo<ReadonlyArray<DashboardTask>>(() => {
-    if (!roadmap) return [];
+    if (!roadmap) return [] as DashboardTask[];
     // Flatten all tasks but flag current week's ones
     const currentWeekInfo = roadmap.weeks.find(w => w.tasks.some(t => !t.completed)) || roadmap.weeks[0];
-    if (!currentWeekInfo) return [];
+    if (!currentWeekInfo) return [] as DashboardTask[];
 
     return currentWeekInfo.tasks.map((t, idx) => ({
       id: `${currentWeekInfo.week}-${idx}`,
@@ -63,7 +68,7 @@ export default function DashboardPage() {
       desc: t.description,
       tag: t.tag || "Goal",
       status: t.completed ? "Done" as const : "In Progress" as const
-    }));
+    })) as DashboardTask[];
   }, [roadmap]);
 
   const weeklyProgress = useMemo(() => {
@@ -74,14 +79,14 @@ export default function DashboardPage() {
     return Math.round((completed / allTasks.length) * 100);
   }, [roadmap]);
 
-  const userData = useMemo<User>(() => ({
-    name: userProfile?.name || "Ritik",
-    role: userProfile?.role || "Aspiring Full Stack Engineer",
-    avatar: userProfile?.avatar || "https://i.pravatar.cc/150?u=ritik",
-    skills: userProfile?.skills || [],
-    xp: activity.reduce((acc, curr) => acc + (curr.xp || 0), 0) + 12000,
+  const userData = useMemo(() => ({
+    name: name,
+    role: role,
+    avatar: avatar || "https://i.pravatar.cc/150?u=ritik",
+    skills: [], // To be populated if needed, or fetched separately
+    xp: Number(xp) || 12000,
     weeklyProgress: weeklyProgress,
-  }), [userProfile, weeklyProgress, activity]);
+  }), [name, role, avatar, xp, weeklyProgress]);
 
   if (isLoading && !roadmap) {
     return (
@@ -106,7 +111,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="flex h-screen w-full bg-slate-50 overflow-hidden font-sans antialiased text-slate-900 selection:bg-blue-100 italic-none">
+    <div className="flex h-screen w-full bg-slate-50 overflow-hidden font-sans antialiased text-slate-900 selection:bg-blue-100">
       <Sidebar />
 
       <div className="flex-1 h-full overflow-y-auto relative scroll-smooth">

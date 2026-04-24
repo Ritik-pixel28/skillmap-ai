@@ -1,3 +1,15 @@
+import { 
+  ApiResponse, 
+  Roadmap, 
+  User, 
+  StatsOverview, 
+  XpHistoryEntry, 
+  HeatmapEntry, 
+  Insight,
+  DashboardActivity,
+  CategoryPerf 
+} from './types';
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 export const getAuthToken = () => {
@@ -7,7 +19,7 @@ export const getAuthToken = () => {
   return null;
 };
 
-export async function apiRequest(endpoint: string, options: RequestInit = {}) {
+export async function apiRequest<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
   const token = getAuthToken();
   const headers = {
     'Content-Type': 'application/json',
@@ -30,7 +42,7 @@ export async function apiRequest(endpoint: string, options: RequestInit = {}) {
       throw new Error(data.message || data.error || 'Something went wrong');
     }
 
-    return data;
+    return data as T;
   } catch (error: any) {
     if (error.message === 'Failed to fetch') {
       throw new Error(`Backend server is not reachable at ${API_URL}`);
@@ -40,17 +52,17 @@ export async function apiRequest(endpoint: string, options: RequestInit = {}) {
 }
 
 export const generateRoadmap = async () => {
-  return await apiRequest('/roadmap/generate', {
+  return await apiRequest<ApiResponse<Roadmap>>('/roadmap/generate', {
     method: 'POST',
   });
 };
 
 export const getRoadmap = async () => {
-  return await apiRequest('/roadmap/current');
+  return await apiRequest<ApiResponse<Roadmap>>('/roadmap/current');
 };
 
 export const updateTaskStatus = async (weekNumber: number, taskTitle: string, completed: boolean) => {
-  return await apiRequest('/roadmap/task', {
+  return await apiRequest<ApiResponse<any>>('/roadmap/task', {
     method: 'PATCH',
     body: JSON.stringify({
       week_number: weekNumber,
@@ -61,29 +73,29 @@ export const updateTaskStatus = async (weekNumber: number, taskTitle: string, co
 };
 
 export const getUserProfile = async () => {
-  return await apiRequest('/profile');
+  return await apiRequest<ApiResponse<User>>('/profile');
 };
 
 export const getStatsOverview = async () => {
-  return await apiRequest('/stats/overview');
+  return await apiRequest<ApiResponse<StatsOverview>>('/stats/overview');
 };
 
 export const getXpHistory = async (days: number = 7) => {
-  return await apiRequest(`/stats/xp-history?days=${days}`);
+  return await apiRequest<ApiResponse<XpHistoryEntry[]>>(`/stats/xp-history?days=${days}`);
 };
 
 export const getHeatmapData = async () => {
-  return await apiRequest('/stats/heatmap');
+  return await apiRequest<ApiResponse<HeatmapEntry[]>>('/stats/heatmap');
 };
 
 export const getInsights = async () => {
-  return await apiRequest('/stats/insights');
+  return await apiRequest<ApiResponse<Insight[]>>('/stats/insights');
 };
 
 export const getSkillsBreakdown = async () => {
-  return await apiRequest('/stats/skills-breakdown');
+  return await apiRequest<ApiResponse<Record<string, { current: number, target: number }>>>('/stats/skills-breakdown');
 };
 
 export const getCategoryPerformance = async () => {
-  return await apiRequest('/stats/category-performance');
+  return await apiRequest<ApiResponse<CategoryPerf[]>>('/stats/category-performance');
 };

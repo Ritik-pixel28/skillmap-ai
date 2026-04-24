@@ -8,44 +8,17 @@ import {
   getInsights
 } from '../api';
 
-interface StatsOverview {
-  totalXp: number;
-  todayXp: number;
-  weeklyXp: number;
-  completionRate: number;
-  currentStreak: number;
-  totalTasks: number;
-  completedTasks: number;
-  pendingTasks: number;
-}
-
-interface XpHistoryEntry {
-  date: string;
-  xp: number;
-}
+import { 
+  StatsOverview,
+  XpHistoryEntry,
+  HeatmapEntry,
+  Insight,
+  ApiResponse,
+  CategoryPerf
+} from '../types';
 
 interface SkillStats {
-  current: Record<string, number>;
-  target: Record<string, number>;
-}
-
-interface CategoryPerf {
-  category: string;
-  percentage: number;
-  completed: number;
-  total: number;
-}
-
-interface HeatmapEntry {
-  date: string;
-  xp: number;
-  intensity: number;
-}
-
-interface Insight {
-  type: string;
-  text: string;
-  positive: boolean;
+  [skillName: string]: { current: number; target: number };
 }
 
 interface StatsState {
@@ -84,7 +57,7 @@ export const useStatsStore = create<StatsState>((set, get) => ({
     set({ isLoading: true, error: null });
 
     // Helper for fault-tolerant API calls
-    const safeFetch = async (apiFunc: () => Promise<any>, fallback: any = null) => {
+    const safeFetch = async <T>(apiFunc: () => Promise<ApiResponse<T>>, fallback: T): Promise<T> => {
       try {
         const res = await apiFunc();
         return res.success ? res.data : fallback;
@@ -103,12 +76,12 @@ export const useStatsStore = create<StatsState>((set, get) => ({
         heatmap, 
         insights
       ] = await Promise.all([
-        safeFetch(getStatsOverview),
-        safeFetch(() => getXpHistory(range), []),
-        safeFetch(getSkillsBreakdown),
-        safeFetch(getCategoryPerformance, []),
-        safeFetch(getHeatmapData, []),
-        safeFetch(getInsights, [])
+        safeFetch<StatsOverview>(getStatsOverview, null as any),
+        safeFetch<XpHistoryEntry[]>(() => getXpHistory(range), []),
+        safeFetch<SkillStats>(getSkillsBreakdown, null as any),
+        safeFetch<CategoryPerf[]>(getCategoryPerformance, []),
+        safeFetch<HeatmapEntry[]>(getHeatmapData, []),
+        safeFetch<Insight[]>(getInsights, [])
       ]);
 
       set({
@@ -116,7 +89,7 @@ export const useStatsStore = create<StatsState>((set, get) => ({
         xpHistory,
         heatmap,
         insights,
-        skills,
+        skills: (skills as any), // Cast to fit the standardized interface if needed
         categories,
         isLoading: false,
         error: null

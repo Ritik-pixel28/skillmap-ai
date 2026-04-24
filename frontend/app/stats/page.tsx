@@ -13,6 +13,7 @@ import { ActivityHeatmap } from "@/components/stats/ActivityHeatmap";
 import { InsightCard } from "@/components/stats/InsightCard";
 import { GoalProgressTracker } from "@/components/stats/GoalProgressTracker";
 import { useStatsStore } from "@/lib/store/useStatsStore";
+import { Skill } from "@/lib/types";
 import { Loader2, RefreshCcw, Filter, ChevronDown } from "lucide-react";
 
 export default function StatsPage() {
@@ -37,14 +38,14 @@ export default function StatsPage() {
   }, [fetchStatsData]);
 
 
-  const skillMatrix = useMemo(() => {
-    if (!skills) return [];
-    return Object.keys(skills.current).map(key => ({
+  const skillMatrix = useMemo<Skill[]>(() => {
+    if (!skills) return [] as Skill[];
+    return Object.keys(skills).map(key => ({
       subject: key.charAt(0).toUpperCase() + key.slice(1).replace('_', ' '),
-      A: skills.current[key],
-      B: skills.target[key],
+      A: skills[key].current,
+      B: skills[key].target,
       fullMark: 100
-    }));
+    })) as Skill[];
   }, [skills]);
 
   // Transform data for weekly view if toggled

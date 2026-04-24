@@ -1,7 +1,8 @@
 import { apiRequest } from '../lib/api';
+import { ApiResponse, LoginResponse, RegisterResponse } from '../lib/types';
 
 export const login = async (email: string, password: string) => {
-  const result = await apiRequest('/auth/login', {
+  const result = await apiRequest<ApiResponse<LoginResponse>>('/auth/login', {
     method: 'POST',
     body: JSON.stringify({ email, password }),
   });
@@ -15,7 +16,7 @@ export const login = async (email: string, password: string) => {
 };
 
 export const register = async (name: string, email: string, password: string) => {
-  return await apiRequest('/auth/register', {
+  return await apiRequest<ApiResponse<RegisterResponse>>('/auth/register', {
     method: 'POST',
     body: JSON.stringify({ name, email, password }),
   });

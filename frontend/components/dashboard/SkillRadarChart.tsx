@@ -16,7 +16,7 @@ interface SkillRadarChartProps {
 
 export const SkillRadarChart = ({ data }: SkillRadarChartProps) => {
   return (
-    <ResponsiveContainer width="100%" height="100%">
+    <ResponsiveContainer width="100%" height={300}>
       <RadarChart cx="50%" cy="50%" outerRadius="80%" data={data}>
         <PolarGrid 
           stroke="#f1f5f9" 
